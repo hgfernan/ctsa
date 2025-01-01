@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR)
 set(PROJECT_NAME ctsa)
 project(${PROJECT_NAME} CXX C)
 
+set(CMAKE_C_FLAGS "-O0 -g -fsanitize=address -fno-omit-frame-pointer")
 
 # src root path
 set(CTSA_SRC_ROOT ${PROJECT_SOURCE_DIR} CACHE PATH "ctsa source root")
@@ -34,10 +35,7 @@ set(PROJECT_WIDE_INCLUDE ${CTSA_SRC_ROOT}/include)
 include_directories(${PROJECT_WIDE_INCLUDE})
 
 
-
-
 include_directories(${COMMON_BIN_PATH})
-
 
 add_subdirectory(src)
 add_subdirectory(test) 

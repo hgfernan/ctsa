@@ -9,7 +9,6 @@
 
 #if !defined(__AUXLIB_H)
 #define __AUXLIB_H
-
 #define NUMERIC_MASK "[+-]?[0-9]\\.?[0-9]*(e[+-]?[0-9]+)?"
 
 #define ARRAY_SIZE(x)  ( sizeof(x) / sizeof(x[0]) )
