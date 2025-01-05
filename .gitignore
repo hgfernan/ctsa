@@ -2,6 +2,7 @@
 #Folders Ignore
 .geany/
 Bin/
+.geany/
 
 #cmake ignore
 CMakeCache.txt

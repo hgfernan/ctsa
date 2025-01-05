@@ -225,6 +225,30 @@ free_fields(size_t n_fields, char*** fields)
  **/
 
 int 
+free_fields(size_t n_fields, char*** fields) 
+{
+	size_t ind;
+	char** work;
+	
+	work = *fields;
+	
+	if ((n_fields == 0) || (! fields)) {
+		return 1;
+	}
+	
+	for (ind = 0; ind < n_fields; ind++) {
+		if (! work[ind]) {
+			continue;
+		}
+		free(work[ind]);
+	}
+	
+	free(work);
+	
+	return 0;
+}
+
+int 
 find_text(char* const* texts, size_t n_texts, const char* key) 
 {
 	size_t ind;
