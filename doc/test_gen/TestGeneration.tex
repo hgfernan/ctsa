@@ -75,12 +75,14 @@ have different structures. That could be easily mapped to a
 relational database structure, but it would be too laborious and
 cumbersome.
 
+For instance: an $ARIMA$ model will have three basic parameters,
+while a $SARIMA$ model will have 7 basic parameters.
+
 As such, test parameters and results will be stored as JSON
 objects encoded as strings, and dealt with by classes specialized
-in their content. That is:  an $ARIMA$ model will have three basic
-parameters, while a $SARIMA$ model will have 7 basic parameters.
-There will be a class for each one of the models, that will be
-able to unpack and allow the use those JSON values.
+in their content. There will be a class for each one of the
+models, that will be able to unpack and allow the use of the
+information in those JSON values.
 
 \begin{figure}[h]
     \centering
