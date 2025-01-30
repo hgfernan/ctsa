@@ -1,0 +1,256 @@
+
+digraph structs {
+
+
+rankdir="LR"
+
+
+node [shape=none]
+
+codes [label=<
+            <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
+                <TR>
+                    <TD COLSPAN="2"><B>codes</B></TD>
+                </TR>
+            
+                <TR>
+                    <TD PORT="code_id_to">🔑</TD>
+                    <TD PORT="code_id_from">code_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="timestamp_to">&nbsp;</TD>
+                    <TD PORT="timestamp_from">timestamp</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="language_to">&nbsp;</TD>
+                    <TD PORT="language_from">language</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="datafile_id_to">&nbsp;</TD>
+                    <TD PORT="datafile_id_from">datafile_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="param_id_to">&nbsp;</TD>
+                    <TD PORT="param_id_from">param_id</TD>
+                </TR>
+            
+            </TABLE>
+        >];
+        
+datafiles [label=<
+            <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
+                <TR>
+                    <TD COLSPAN="2"><B>datafiles</B></TD>
+                </TR>
+            
+                <TR>
+                    <TD PORT="datafile_id_to">🔑</TD>
+                    <TD PORT="datafile_id_from">datafile_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="timestamp_to">&nbsp;</TD>
+                    <TD PORT="timestamp_from">timestamp</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="filename_to">&nbsp;</TD>
+                    <TD PORT="filename_from">filename</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="total_recs_to">&nbsp;</TD>
+                    <TD PORT="total_recs_from">total_recs</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="description_to">&nbsp;</TD>
+                    <TD PORT="description_from">description</TD>
+                </TR>
+            
+            </TABLE>
+        >];
+        
+execs [label=<
+            <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
+                <TR>
+                    <TD COLSPAN="2"><B>execs</B></TD>
+                </TR>
+            
+                <TR>
+                    <TD PORT="exec_id_to">🔑</TD>
+                    <TD PORT="exec_id_from">exec_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="timestamp_to">&nbsp;</TD>
+                    <TD PORT="timestamp_from">timestamp</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="code_id_to">&nbsp;</TD>
+                    <TD PORT="code_id_from">code_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="sys_desc_to">&nbsp;</TD>
+                    <TD PORT="sys_desc_from">sys_desc</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="duration_to">&nbsp;</TD>
+                    <TD PORT="duration_from">duration</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="value_to">&nbsp;</TD>
+                    <TD PORT="value_from">value</TD>
+                </TR>
+            
+            </TABLE>
+        >];
+        
+paramlims [label=<
+            <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
+                <TR>
+                    <TD COLSPAN="2"><B>paramlims</B></TD>
+                </TR>
+            
+                <TR>
+                    <TD PORT="paramlim_id_to">🔑</TD>
+                    <TD PORT="paramlim_id_from">paramlim_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="model_to">&nbsp;</TD>
+                    <TD PORT="model_from">model</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="timestamp_to">&nbsp;</TD>
+                    <TD PORT="timestamp_from">timestamp</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="extreme_min_to">&nbsp;</TD>
+                    <TD PORT="extreme_min_from">extreme_min</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="extreme_max_to">&nbsp;</TD>
+                    <TD PORT="extreme_max_from">extreme_max</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="created_min_to">&nbsp;</TD>
+                    <TD PORT="created_min_from">created_min</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="created_max_to">&nbsp;</TD>
+                    <TD PORT="created_max_from">created_max</TD>
+                </TR>
+            
+            </TABLE>
+        >];
+        
+params [label=<
+            <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
+                <TR>
+                    <TD COLSPAN="2"><B>params</B></TD>
+                </TR>
+            
+                <TR>
+                    <TD PORT="param_id_to">🔑</TD>
+                    <TD PORT="param_id_from">param_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="model_to">&nbsp;</TD>
+                    <TD PORT="model_from">model</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="timestamp_to">&nbsp;</TD>
+                    <TD PORT="timestamp_from">timestamp</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="value_to">&nbsp;</TD>
+                    <TD PORT="value_from">value</TD>
+                </TR>
+            
+            </TABLE>
+        >];
+        
+tests [label=<
+            <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
+                <TR>
+                    <TD COLSPAN="2"><B>tests</B></TD>
+                </TR>
+            
+                <TR>
+                    <TD PORT="test_id_to">🔑</TD>
+                    <TD PORT="test_id_from">test_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="timestamp_to">&nbsp;</TD>
+                    <TD PORT="timestamp_from">timestamp</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="left_exec_id_to">&nbsp;</TD>
+                    <TD PORT="left_exec_id_from">left_exec_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="right_exec_id_to">&nbsp;</TD>
+                    <TD PORT="right_exec_id_from">right_exec_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="value_to">&nbsp;</TD>
+                    <TD PORT="value_from">value</TD>
+                </TR>
+            
+            </TABLE>
+        >];
+        
+tests:right_exec_id_from:e -> execs:exec_id_to:w
+tests:left_exec_id_from:e -> execs:exec_id_to:w
+execs:code_id_from:e -> codes:code_id_to:w
+codes:param_id_from:e -> params:param_id_to:w
+codes:datafile_id_from:e -> datafiles:datafile_id_to:w
+
+}

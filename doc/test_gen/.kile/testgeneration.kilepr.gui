@@ -1,0 +1,13 @@
+[General]
+kile_livePreviewEnabled=true
+kile_livePreviewStatusUserSpecified=false
+kile_livePreviewTool=LivePreview-PDFLaTeX
+lastDocument=
+
+[item:TestGeneration.tex]
+open=true
+order=-1
+
+[item:testgeneration.kilepr]
+open=false
+order=-1
