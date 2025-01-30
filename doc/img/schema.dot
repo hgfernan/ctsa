@@ -114,8 +114,14 @@ execs [label=<
             
 
                 <TR>
-                    <TD PORT="duration_to">&nbsp;</TD>
-                    <TD PORT="duration_from">duration</TD>
+                    <TD PORT="elapsed_time_to">&nbsp;</TD>
+                    <TD PORT="elapsed_time_from">elapsed_time</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="process_time_to">&nbsp;</TD>
+                    <TD PORT="process_time_from">process_time</TD>
                 </TR>
             
 
@@ -236,6 +242,12 @@ tests [label=<
                 <TR>
                     <TD PORT="right_exec_id_to">&nbsp;</TD>
                     <TD PORT="right_exec_id_from">right_exec_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="tolerance_to">&nbsp;</TD>
+                    <TD PORT="tolerance_from">tolerance</TD>
                 </TR>
             
 

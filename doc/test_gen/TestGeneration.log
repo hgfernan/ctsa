@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Debian) (preloaded format=pdflatex 2025.1.11)  30 JAN 2025 14:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022/Debian) (preloaded format=pdflatex 2025.1.11)  30 JAN 2025 16:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -918,46 +918,57 @@ LaTeX Font Info:    Trying to load font information for U+lasy on input line 41
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
-)
+) (./TestGeneration.toc)
+\tf@toc=\write4
+\openout4 = `TestGeneration.toc'.
+
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 72.
+(Font)              <10> on input line 80.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 72.
+(Font)              <7> on input line 80.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 72.
-<../img/schema.jpg, id=16, 634.62094pt x 563.85657pt>
+(Font)              <5> on input line 80.
+<../img/schema.jpg, id=34, 651.18282pt x 563.85657pt>
 File: ../img/schema.jpg Graphic file (type jpg)
 <use ../img/schema.jpg>
-Package pdftex.def Info: ../img/schema.jpg  used on input line 80.
-(pdftex.def)             Requested size: 222.12065pt x 197.35275pt.
- [1
+Package pdftex.def Info: ../img/schema.jpg  used on input line 88.
+(pdftex.def)             Requested size: 227.9174pt x 197.35275pt.
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <../img/schema.jpg>] [2] (.
-/TestGeneration.aux)
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2 <../img/schema.jpg>]
+[3] (./TestGeneration.aux)
 Package rerunfilecheck Info: File `TestGeneration.out' has not changed.
-(rerunfilecheck)             Checksum: BDA1759AAE8EDFC90B329CFB5FAFCB68;269.
+(rerunfilecheck)             Checksum: F35E252CAB010092066F8DCC9A2002CD;632.
  ) 
 Here is how much of TeX's memory you used:
- 11121 strings out of 477359
- 177201 string characters out of 5827582
- 1858330 words of memory out of 5000000
- 31080 multiletter control sequences out of 15000+600000
- 563972 words of font info for 69 fonts, out of 8000000 for 9000
+ 11147 strings out of 477359
+ 177504 string characters out of 5827582
+ 1862330 words of memory out of 5000000
+ 31096 multiletter control sequences out of 15000+600000
+ 566967 words of font info for 70 fonts, out of 8000000 for 9000
  503 hyphenation exceptions out of 8191
- 75i,7n,76p,507b,537s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texmf/fonts/enc/dv
-ips/lm/lm-mathit.enc}</usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb></usr/s
-hare/texmf/fonts/type1/public/lm/lmbx9.pfb></usr/share/texmf/fonts/type1/public
-/lm/lmmi10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/te
-xmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr
-17.pfb></usr/share/texmf/fonts/type1/public/lm/lmr9.pfb></usr/share/texmf/fonts
-/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmro10.pfb>
-</usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type
-1/public/lm/lmtt12.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt9.pfb>
-Output written on TestGeneration.pdf (2 pages, 337134 bytes).
+ 75i,7n,76p,507b,600s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/en
+c/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/s
+hare/texmf/fonts/enc/dvips/lm/lm-ec.enc}</usr/share/texmf/fonts/type1/public/lm
+/lmbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb></usr/share/texm
+f/fonts/type1/public/lm/lmbx9.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi1
+0.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi7.pfb></usr/share/texmf/fonts
+/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></
+usr/share/texmf/fonts/type1/public/lm/lmr17.pfb></usr/share/texmf/fonts/type1/p
+ublic/lm/lmr9.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></usr/shar
+e/texmf/fonts/type1/public/lm/lmro10.pfb></usr/share/texmf/fonts/type1/public/l
+m/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/tex
+mf/fonts/type1/public/lm/lmtt12.pfb></usr/share/texmf/fonts/type1/public/lm/lmt
+t9.pfb>
+Output written on TestGeneration.pdf (3 pages, 396079 bytes).
 PDF statistics:
- 101 PDF objects out of 1000 (max. 8388607)
- 71 compressed objects within 1 object stream
- 11 named destinations out of 1000 (max. 500000)
- 30 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 151 PDF objects out of 1000 (max. 8388607)
+ 112 compressed objects within 2 object streams
+ 17 named destinations out of 1000 (max. 500000)
+ 54 words of extra memory for PDF output out of 10000 (max. 10000000)
 

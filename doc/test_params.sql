@@ -40,7 +40,8 @@ CREATE TABLE IF NOT EXISTS "execs" (
 	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
 	"code_id"	INTEGER NOT NULL,
 	"sys_desc"	TEXT NOT NULL,
-	"duration"	NUMERIC NOT NULL,
+	"elapsed_time"	NUMERIC NOT NULL,
+	"process_time"	NUMERIC NOT NULL,
 	"value"	    TEXT NOT NULL,
 	FOREIGN KEY (code_id) REFERENCES codes(code_id)
 );
@@ -50,6 +51,7 @@ CREATE TABLE IF NOT EXISTS "tests" (
 	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
 	"left_exec_id"	INTEGER NOT NULL,
 	"right_exec_id"	INTEGER NOT NULL,
+	"tolerance"	NUMERIC NOT NULL,	
 	"value"	    TEXT NOT NULL,
 	FOREIGN KEY (left_exec_id) REFERENCES execs(exec_id),	
 	FOREIGN KEY (right_exec_id) REFERENCES execs(exec_id)
