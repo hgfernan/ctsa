@@ -1,3 +1,5 @@
+.kile/
+
 *.aux
 *.fdb_latexmk
 *.fls
