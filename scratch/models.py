@@ -13,7 +13,7 @@ from types  import SimpleNamespace
 from typing import List
 
 class ProgramWriter:
-    def __init__(self, mathod : str) -> None:
+    def __init__(self, method : str) -> None:
         pass 
 
 class ClangProgramWriter(ProgramWriter):
@@ -30,10 +30,10 @@ class RlangProgramWriter(ProgramWriter):
 # 	int method;
 # 	int optmethod;// Valid only for MLE estimation
 
-class Models:
+class Model:
     pass 
 
-class Ar(Models): 
+class Ar(Model): 
     def __init__(self, value : str, writer : ProgramWriter) -> None:
         jobj = json.loads(value)
         
@@ -100,16 +100,16 @@ class Ar(Models):
         return str(self.jobj)
 
         
-class Arima(Models):
+class Arima(Model):
     pass 
 
-class AutoArima(Models):
+class AutoArima(Model):
     pass 
 
-class Sarima(Models):
+class Sarima(Model):
     pass 
 
-class Sarimax(Models):
+class Sarimax(Model):
     pass 
 
 def main() -> int:

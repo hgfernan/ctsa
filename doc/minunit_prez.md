@@ -99,7 +99,7 @@ of C and do not intend to emulate neither inheritance nor restrictions of access
 
 The parameters are typically set with a constructor-like function with an `_init_` suffix. For
 instance, for the `sarima` objects, this type of function is `sarima_init()`. Additional parameters
-can be set with functions that have a suffix starting with `_set`.  For instance, to set the 
+can be set with functions that have a suffix starting with `_set`.  For instance, to set the
 optimization method for `sarima` objects the function `sarima_setMethod()`.
 
 A model is fixed typically using a function with suffix `_exec` or `_estimate`. For instance, the
@@ -109,7 +109,7 @@ The results of the model fitting are presented to standard output using a functi
 `_summary()`. In the case of the `sarima` objects, the function is named `sarima_summary()`.
 
 Forecasts along the time can be made by `_predict()` methods. Por instance, for the `sarima`
-objects, the method is `sarima_predict()`. 
+objects, the method is `sarima_predict()`.
 
-Finally, to release the memory of one object, it's used a method `free()`. In the case of the 
+Finally, to release the memory of one object, it's used a method `free()`. In the case of the
 `sarima` object, `sarima_free()` is the name of the method.
