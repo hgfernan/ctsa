@@ -8,6 +8,7 @@ Created on Fri Jan 31 14:00:05 2025
 """
 
 from models import Model
+from datafiles import DataFile
 
 class ProgramWriter:
     def __init__(self, method : str) -> None:

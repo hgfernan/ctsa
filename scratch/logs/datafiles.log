@@ -1,0 +1,6 @@
+2025-02-03 17:38:53:WARNING:datafiles.py Expected number of records (20) differs from the real number (10).
+	It will be adjusted
+2025-02-03 17:38:53:INFO:Read file 'test.csv'
+2025-02-03 17:38:53:INFO:File id 1
+2025-02-03 17:38:53:INFO:Total records 10
+2025-02-03 17:38:53:INFO:Description 'A simple test file'
