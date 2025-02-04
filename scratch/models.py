@@ -12,19 +12,6 @@ import json # loads(), dumps()
 from types  import SimpleNamespace
 from typing import List
 
-class ProgramWriter:
-    def __init__(self, method : str) -> None:
-        pass 
-
-class ClangProgramWriter(ProgramWriter):
-    pass 
-
-class PythonProgramWriter(ProgramWriter):
-    pass 
-
-class RlangProgramWriter(ProgramWriter):
-    pass
-
 #   int L; // Number of values to extrapolate
 # 	int N; // length of time series
 # 	int method;
@@ -34,13 +21,12 @@ class Model:
     pass 
 
 class Ar(Model): 
-    def __init__(self, value : str, writer : ProgramWriter) -> None:
+    def __init__(self, value : str) -> None:
         jobj = json.loads(value)
         
         if 'params' not in jobj:
             raise KeyError('\'params\' was not found in AR JSON value')
         
-        self.writer = writer
         self.jobj = jobj
         self.base = SimpleNamespace()
         
@@ -81,17 +67,66 @@ class Ar(Model):
             err_msg = err_msg[0 : -2] + ' were not found in AR results.' 
             raise KeyError(err_msg)
     
-    def gen_call(self):
+    def get_constructor_names(self) -> List[str]:
         """
-        Write a program, as defined by the Writer instance
+        Get parameter names for model construction as a list
 
         Returns
         -------
         None.
 
         """
-        # TODO list vars
-        # TODO call class _init()
+    
+    def get_constructor_values(self) -> List[str]:
+        """
+        Get parameter values for model construction as a list
+
+        Returns
+        -------
+        None.
+
+        """
+    
+    def get_fitting_names(self) -> List[str]:
+        """
+        Get parameter names for model fitting as a list
+
+        Returns
+        -------
+        None.
+
+        """
+    
+    def get_fitting_values(self) -> List[str]:
+        """
+        Get parameter values for model fitting as a list
+
+        Returns
+        -------
+        None.
+
+        """
+    
+    def get_prediction_names(self) -> List[str]:
+        """
+        Get parameter names for model predictions as a list
+
+        Returns
+        -------
+        None.
+
+        """
+    
+    def get_prediction_values(self) -> List[str]:
+        """
+        Get parameter values for model fitting as a list
+
+        Returns
+        -------
+        None.
+
+        """
+        
         # TODO call class _exec()
         # TODO call class _predict()
 
@@ -113,10 +148,9 @@ class Sarimax(Model):
     pass 
 
 def main() -> int:
-    writer = ProgramWriter()
     # json_str = '{ "params" : {"L" : 5, "N" : 10, "method" : 2, "optmethod" : 4}}'
     json_str = '{ "params" : {"N" : 10, "method" : 2, "optmethod" : 4}}'
-    ar = Ar(json_str, writer)
+    ar = Ar(json_str)
     
     print(str(ar))
     
