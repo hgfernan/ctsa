@@ -6,7 +6,8 @@ add_executable(artest_templ
 			   auxlib.c 
 			   auxlib.h 
 			   csv_in.c 
-			   csv_in.h 
+			   csv_in.h
+			   sjson_macros.h
 			   )
 
 target_link_libraries(artest_templ ctsalib m)

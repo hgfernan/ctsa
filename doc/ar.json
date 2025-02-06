@@ -1,12 +1,12 @@
 {
-    "parameters" : {
+    "parameters": {
         "reading": {
             "inp": ""
         },
         "init": {
             "L": 5,
             "n_rows": 10,
-            "method": 2 
+            "method": 2
         },
         "fitting": {
             "obj": "",
@@ -23,10 +23,11 @@
             "amse": ""
         }
     },
-    "results" : {
+    "results": {
+		"duration": 0.00002,
         "fitting": {
-            "aic" : 7,
-            "order" : 7,
+            "aic": 7,
+            "order": 7,
             "coefficients": [
                 0.372554,
                 0.197209,
@@ -37,7 +38,7 @@
                 0.156202
             ],
             "mean": 17.0624,
-            "sigma2": "0.0949526"
+            "sigma2": 0.0949526
         },
         "predict": {
             "xpred": [
@@ -55,6 +56,5 @@
                 0.351388
             ]
         }
-    
     }
 }

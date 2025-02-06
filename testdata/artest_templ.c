@@ -1,38 +1,59 @@
 // SPDX-License-Identifier: BSD-3-Clause
+#include <time.h>   /* CLOCKS_PER_SEC, clock() */
 #include <stdio.h>  /* printf() */
-#include <stdlib.h> /* calloc(), free() */
+#include <stdlib.h> /* calloc(), free(), atoi() */
+
 #include "../header/ctsa.h"
 
 #include "csv_in.h" /* csv_in() */
 
-#define DATA_IN "../data/1m-20241125_001625-20241125_165625.csv"
-#define JSON_OUT "json/artest_0001.json"
+#include "sjson_macros.h" /* SJM_ macros */
 
+#define DATA_IN "../data/1m-20241125_001625-20241125_165625.csv"
 
 int main(int argc, char* const* argv) {
 	int i, L, method;
 	double *inp;
 	double *xpred, *amse;
 	size_t n_rows;
+	size_t exec_id;
+	
+	clock_t start;
+	clock_t stop;
+	double duration;
+	
 	FILE* json_out = (FILE*)NULL;
+	char buf[2048] = {'\0'};
+	SJSON_MACROS_VARS
 
 	ar_object obj;
 
 	L = 5;
 
-	if (argc > 1) {
+	if (argc < 2) {
+		printf("%s: ERROR Missing execution number\n", argv[0]);
+				
+		/* Return to indicate failure*/
+		return 2;
+	}
+	
+	exec_id = atoi(argv[1]);
+	
+	if (argc > 2) {
 		printf("%s: WARNING Additional parameters ", argv[0]);
 		
-		int narg = 1;
+		int narg = 2;
 		for (narg = 1; narg < argc; narg++) {
 			printf("\'%s\' ", argv[narg]);
 		}
 		puts("will be ignored\n");
 		
 		/* Return to indicate failure*/
-		return 1;
+		return 2;
 	}
 
+	start = clock();
+	
 	xpred = (double*)calloc(sizeof(double),  L);
 	amse = (double*)calloc(sizeof(double), L);
 
@@ -66,18 +87,31 @@ int main(int argc, char* const* argv) {
 		printf("%g ", sqrt(amse[i]));
 	}
 	printf("\n");
+ 
+	/* Releasing of dynamic memory */
+	ar_free(obj);
+			
+	free(inp);
+	free(xpred);
+	free(amse);
+	
+	stop = clock();
+	duration = (stop - start) / CLOCKS_PER_SEC;
 
 	/* Saving the results and parameters as JSON file */
-	json_out = fopen(JSON_OUT, "w");
+	sprintf(buf, "json/%04d.json", exec_id);
+	json_out = fopen(buf, "w");
 	
 	if (! json_out) {
 		printf("%s: ERROR Could not open file '%s' for output\n", 
-			argv[0], JSON_OUT);
+			argv[0], buf);
 		
 		/* Return to indicate failure*/
 		return 2;
 	}
-	
+
+	buf[0] = '\0';
+/*	
 	fputs("{\n", json_out);
 	
 	fputs("\t\"parameters\" : {\n", json_out);
@@ -122,14 +156,31 @@ int main(int argc, char* const* argv) {
 	fputs("}\n", json_out);
 	
 	fclose(json_out);
+ */	
+	SJM_OPEN_ALL(buf);
 
-	/* Releasing of dynamic memory */
-	ar_free(obj);
-			
-	free(inp);
-	free(xpred);
-	free(amse);
-
+		SJM_OPEN_STRUCT("parameters", buf);
+		
+			SJM_OPEN_STRUCT("reading", buf);
+				SJM_ADD_PAIR_STR("inp", DATA_IN, buf);
+			SJM_CLOSE_STRUCT(buf);
+		
+			SJM_OPEN_STRUCT("init", buf);
+				SJM_ADD_PAIR_INT("L", L, buf);
+				SJM_ADD_PAIR_INT("n_rows", n_rows, buf);
+				SJM_ADD_PAIR_INT("method", method, buf);
+			SJM_CLOSE_STRUCT(buf);
+				
+		SJM_CLOSE_STRUCT(buf);
+		
+		SJM_OPEN_STRUCT("result", buf);
+				
+		SJM_CLOSE_STRUCT(buf);
+	
+	SJM_CLOSE_ALL(buf);
+	
+	fputs(buf, json_out);
+	fclose(json_out);
 	
 	return 0;
 }
