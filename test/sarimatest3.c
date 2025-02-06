@@ -9,14 +9,15 @@
 #define INPUT_FILE "../data/1m-20241125_001625-20241125_165625.csv"
 
 int main(void) {
-	int i, N, d, L;
-	double *inp;
+	int i, d, L;
 	int p, q;
 	int s, P, D, Q;
 	double *xpred, *amse;
+	double *inp = (double*)NULL;
 	double *column = (double*)NULL;
 	size_t n_rows = 0;
 	sarima_object obj;
+	
 	p = 0;
 	d = 1;
 	q = 1;

@@ -207,46 +207,6 @@ free_fields(size_t n_fields, char*** fields)
 	return 0;
 }
 
-/**
- * Search a text in an array of strings, just as the ones returned by 
- * `split_fields()`
- * 
- * @param[in] texts The array of strings.
- * @param[in] n_texts The number of texts in the string array.
- * @param[int] key The text to be freed. Should not be the empty string.
- * 
- * \retval The zero-based position where the key is. 
- * In case of sucess. 
- * 
- * \retval -1
- * In case text is not found or some failure
- * of some failure, like zero number of elements, or 
- * if the char array is the null pointer
- **/
-
-int 
-free_fields(size_t n_fields, char*** fields) 
-{
-	size_t ind;
-	char** work;
-	
-	work = *fields;
-	
-	if ((n_fields == 0) || (! fields)) {
-		return 1;
-	}
-	
-	for (ind = 0; ind < n_fields; ind++) {
-		if (! work[ind]) {
-			continue;
-		}
-		free(work[ind]);
-	}
-	
-	free(work);
-	
-	return 0;
-}
 
 int 
 find_text(char* const* texts, size_t n_texts, const char* key) 
