@@ -23,6 +23,7 @@ int main(int argc, char* const* argv) {
 	double duration;
 	
 	FILE* json_out = (FILE*)NULL;
+	char fmt_buf[128] = {'\0'};
 	char buf[2048] = {'\0'};
 	SJSON_MACROS_VARS
 
@@ -87,16 +88,9 @@ int main(int argc, char* const* argv) {
 		printf("%g ", sqrt(amse[i]));
 	}
 	printf("\n");
- 
-	/* Releasing of dynamic memory */
-	ar_free(obj);
-			
-	free(inp);
-	free(xpred);
-	free(amse);
 	
 	stop = clock();
-	duration = (stop - start) / CLOCKS_PER_SEC;
+	duration = (stop - start) / (double)CLOCKS_PER_SEC;
 
 	/* Saving the results and parameters as JSON file */
 	sprintf(buf, "json/%04d.json", exec_id);
@@ -111,52 +105,6 @@ int main(int argc, char* const* argv) {
 	}
 
 	buf[0] = '\0';
-/*	
-	fputs("{\n", json_out);
-	
-	fputs("\t\"parameters\" : {\n", json_out);
-	
-	fputs("\t\t\"reading\" : {\n", json_out);
-	
-	fprintf(json_out, "\t\t\t\"inp\" : \"%s\"\n", DATA_IN);
-	
-	fputs("\t\t},\n", json_out);
-	
-	fputs("\t\t\"init\" : {\n", json_out);
-	
-	fprintf(json_out, "\t\t\t\"L\" : %d,\n", L);
-	fprintf(json_out, "\t\t\t\"n_rows\" : %lu,\n", n_rows);
-	fprintf(json_out, "\t\t\t\"method\" : %d\n", method);
-	
-	fputs("\t\t},\n", json_out);
-	
-	fputs("\t\t\"fitting\" : {\n", json_out);
-	fputs("\t\t\t\"obj\" : \"\",\n", json_out);
-	fputs("\t\t\t\"inp\" : \"\"\n", json_out);
-	fputs("\t\t},\n", json_out);
-	
-	fputs("\t\t\"summary\" : {\n", json_out);
-	fputs("\t\t\t\"obj\" : \"\"\n", json_out);
-	fputs("\t\t},\n", json_out);
-	
-	fputs("\t\t\"predict\" : {\n", json_out);
-	fputs("\t\t\t\"obj\" : \"\",\n", json_out);
-	fputs("\t\t\t\"inp\" : \"\",\n", json_out);
-	fputs("\t\t\t\"L\" : \"\",\n", json_out);
-	fputs("\t\t\t\"xpred\" : \"\",\n", json_out);
-	fputs("\t\t\t\"amse\" : \"\"\n", json_out);
-	fputs("\t\t},\n", json_out);
-	
-	fputs("\t},\n", json_out);
-	
-	fputs("\t\"results\" : {\n", json_out);
-	
-	fputs("\t}\n", json_out);
-	
-	fputs("}\n", json_out);
-	
-	fclose(json_out);
- */	
 	SJM_OPEN_ALL(buf);
 
 		SJM_OPEN_STRUCT("parameters", buf);
@@ -170,17 +118,73 @@ int main(int argc, char* const* argv) {
 				SJM_ADD_PAIR_INT("n_rows", n_rows, buf);
 				SJM_ADD_PAIR_INT("method", method, buf);
 			SJM_CLOSE_STRUCT(buf);
-				
+			
+			SJM_OPEN_STRUCT("fitting", buf);
+				SJM_ADD_PAIR_STR("obj", "", buf);
+				SJM_ADD_PAIR_STR("inp", "", buf);
+			SJM_CLOSE_STRUCT(buf);
+		
+			SJM_OPEN_STRUCT("summary", buf);
+				SJM_ADD_PAIR_STR("obj", "", buf);
+			SJM_CLOSE_STRUCT(buf);
+
+			SJM_OPEN_STRUCT("predict", buf);
+				SJM_ADD_PAIR_STR("obj", "", buf);
+				SJM_ADD_PAIR_STR("inp", "", buf);
+				SJM_ADD_PAIR_STR("L", "", buf);
+				SJM_ADD_PAIR_STR("xpred", "", buf);
+				SJM_ADD_PAIR_STR("amse", "", buf);
+			SJM_CLOSE_STRUCT(buf);
+							
 		SJM_CLOSE_STRUCT(buf);
 		
 		SJM_OPEN_STRUCT("result", buf);
+			SJM_ADD_PAIR_STR("executable", argv[0], buf);
+			SJM_ADD_PAIR_DBL("duration", duration, buf);
+		
+			SJM_OPEN_STRUCT("fitting", buf);
+				SJM_ADD_PAIR_INT("order", obj->p, buf);
 				
+				SJM_OPEN_ARRAY("coefficients", buf);
+				for (i = 0; i < obj->p; ++i) {
+					SJM_ADD_ELMT_DBL(obj->phi[i], buf);
+				}
+				SJM_CLOSE_ARRAY(buf);
+
+				SJM_ADD_PAIR_DBL("mean", obj->mean, buf);
+				SJM_ADD_PAIR_DBL("sigma2", obj->var, buf);
+				
+			SJM_CLOSE_STRUCT(buf);
+			
+			SJM_OPEN_STRUCT("predict", buf);
+			
+				SJM_OPEN_ARRAY("xpred", buf);
+				for (i = 0; i < L; ++i) {
+					SJM_ADD_ELMT_DBL(xpred[i], buf);
+				}
+				SJM_CLOSE_ARRAY(buf);
+			
+				SJM_OPEN_ARRAY("std_err", buf);
+				for (i = 0; i < L; ++i) {
+					SJM_ADD_ELMT_DBL(sqrt(amse[i]), buf);
+				}
+				SJM_CLOSE_ARRAY(buf);
+			
+			SJM_CLOSE_STRUCT(buf);
+						
 		SJM_CLOSE_STRUCT(buf);
 	
 	SJM_CLOSE_ALL(buf);
 	
 	fputs(buf, json_out);
 	fclose(json_out);
+ 
+	/* Releasing of dynamic memory */
+	ar_free(obj);
+			
+	free(inp);
+	free(xpred);
+	free(amse);
 	
 	return 0;
 }

@@ -24,9 +24,9 @@
         }
     },
     "results": {
-		"duration": 0.00002,
+		"executable": "a",
+        "duration": 0.00002,
         "fitting": {
-            "aic": 7,
             "order": 7,
             "coefficients": [
                 0.372554,

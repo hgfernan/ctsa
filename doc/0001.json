@@ -1,0 +1,54 @@
+{
+	"parameters": {
+		"reading": {
+			"inp": "../data/1m-20241125_001625-20241125_165625.csv"
+		},
+		"init": {
+			"L": 5,
+			"n_rows": 1000,
+			"method": 0
+		},
+		"fitting": {
+			"obj": "",
+			"inp": ""
+		},
+		"summary": {
+			"obj": ""
+		},
+		"predict": {
+			"obj": "",
+			"inp": "",
+			"L": "",
+			"xpred": "",
+			"amse": ""
+		}
+	},
+	"result": {
+		"executable": "./artest_templ",
+		"duration": 0.142812,
+		"fitting": {
+			"order": 1,
+			"coefficients": [
+				0.994245
+			],
+			"mean": 97657,
+			"sigma2": 7144.28
+		},
+		"predict": {
+			"xpred": [
+				96006.5,
+				96016,
+				96025.5,
+				96034.9,
+				96044.2
+			],
+			"std_err": [
+				66.3604,
+				93.5781,
+				114.281,
+				131.582,
+				146.693
+			]
+		}
+	}
+}
