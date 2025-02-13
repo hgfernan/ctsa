@@ -8,31 +8,35 @@ CREATE TABLE IF NOT EXISTS "datafiles" (
 	"description"	TEXT NOT NULL
 );
 
+/*
 CREATE TABLE IF NOT EXISTS "params" (
 	"param_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"model"		TEXT NOT NULL,
 	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
 	"value"		TEXT NOT NULL
 );
+ */
 
 CREATE TABLE IF NOT EXISTS "paramlims" (
 	"paramlim_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
-	"model"		TEXT NOT NULL,
 	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
 	"extreme_min"	TEXT NOT NULL,
 	"extreme_max"	TEXT NOT NULL,
 	"created_min"	TEXT NOT NULL,
-	"created_max" 	TEXT NOT NULL
+	"created_max" 	TEXT NOT NULL,
+	"model_id"		INTEGER NOT NULL,
+	FOREIGN KEY (model_id) REFERENCES models(model_id)	
 );
 
 CREATE TABLE IF NOT EXISTS "codes" (
 	"code_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
-	"language"	TEXT NOT NULL,
 	"datafile_id"	INTEGER NOT NULL,
-	"param_id"	INTEGER NOT NULL,
+	"parameter_id"	INTEGER NOT NULL,
+	"template_id"	INTEGER NOT NULL,
 	FOREIGN KEY (datafile_id) REFERENCES datafiles(datafile_id),	
-	FOREIGN KEY (param_id) REFERENCES params(param_id)
+	FOREIGN KEY (parameter_id) REFERENCES parameters(parameter_id),
+	FOREIGN KEY (template_id) REFERENCES templates(template_id)
 );
 
 CREATE TABLE IF NOT EXISTS "execs" (
@@ -71,8 +75,8 @@ CREATE TABLE IF NOT EXISTS "libraries" (
 
 CREATE TABLE IF NOT EXISTS "capabilities" (
 	"capability_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
-	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
-	'model_id' INTEGER NOT NULL,
+	"timestamp"		TEXT NOT NULL DEFAULT 'date()',
+	'model_id' 		INTEGER NOT NULL,
 	'library_id' INTEGER NOT NULL,
 	FOREIGN KEY (model_id) REFERENCES models(model_id),	
 	FOREIGN KEY (library_id) REFERENCES libraries(library_id)
