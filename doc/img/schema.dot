@@ -7,6 +7,76 @@ rankdir="LR"
 
 node [shape=none]
 
+arguments [label=<
+            <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
+                <TR>
+                    <TD COLSPAN="2"><B>arguments</B></TD>
+                </TR>
+            
+                <TR>
+                    <TD PORT="argument_id_to">🔑</TD>
+                    <TD PORT="argument_id_from">argument_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="timestamp_to">&nbsp;</TD>
+                    <TD PORT="timestamp_from">timestamp</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="description_to">&nbsp;</TD>
+                    <TD PORT="description_from">description</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="model_id_to">&nbsp;</TD>
+                    <TD PORT="model_id_from">model_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="value_to">&nbsp;</TD>
+                    <TD PORT="value_from">value</TD>
+                </TR>
+            
+            </TABLE>
+        >];
+        
+capabilities [label=<
+            <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
+                <TR>
+                    <TD COLSPAN="2"><B>capabilities</B></TD>
+                </TR>
+            
+                <TR>
+                    <TD PORT="capability_id_to">🔑</TD>
+                    <TD PORT="capability_id_from">capability_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="timestamp_to">&nbsp;</TD>
+                    <TD PORT="timestamp_from">timestamp</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="model_id_to">&nbsp;</TD>
+                    <TD PORT="model_id_from">model_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="library_id_to">&nbsp;</TD>
+                    <TD PORT="library_id_from">library_id</TD>
+                </TR>
+            
+            </TABLE>
+        >];
+        
 codes [label=<
             <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
                 <TR>
@@ -133,6 +203,96 @@ execs [label=<
             </TABLE>
         >];
         
+libraries [label=<
+            <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
+                <TR>
+                    <TD COLSPAN="2"><B>libraries</B></TD>
+                </TR>
+            
+                <TR>
+                    <TD PORT="library_id_to">🔑</TD>
+                    <TD PORT="library_id_from">library_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="timestamp_to">&nbsp;</TD>
+                    <TD PORT="timestamp_from">timestamp</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="description_to">&nbsp;</TD>
+                    <TD PORT="description_from">description</TD>
+                </TR>
+            
+            </TABLE>
+        >];
+        
+models [label=<
+            <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
+                <TR>
+                    <TD COLSPAN="2"><B>models</B></TD>
+                </TR>
+            
+                <TR>
+                    <TD PORT="model_id_to">🔑</TD>
+                    <TD PORT="model_id_from">model_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="timestamp_to">&nbsp;</TD>
+                    <TD PORT="timestamp_from">timestamp</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="description_to">&nbsp;</TD>
+                    <TD PORT="description_from">description</TD>
+                </TR>
+            
+            </TABLE>
+        >];
+        
+parameters [label=<
+            <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
+                <TR>
+                    <TD COLSPAN="2"><B>parameters</B></TD>
+                </TR>
+            
+                <TR>
+                    <TD PORT="parameter_id_to">🔑</TD>
+                    <TD PORT="parameter_id_from">parameter_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="timestamp_to">&nbsp;</TD>
+                    <TD PORT="timestamp_from">timestamp</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="value_to">&nbsp;</TD>
+                    <TD PORT="value_from">value</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="argument_id_to">&nbsp;</TD>
+                    <TD PORT="argument_id_from">argument_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="capability_id_to">&nbsp;</TD>
+                    <TD PORT="capability_id_from">capability_id</TD>
+                </TR>
+            
+            </TABLE>
+        >];
+        
 paramlims [label=<
             <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
                 <TR>
@@ -215,6 +375,44 @@ params [label=<
             </TABLE>
         >];
         
+templates [label=<
+            <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
+                <TR>
+                    <TD COLSPAN="2"><B>templates</B></TD>
+                </TR>
+            
+                <TR>
+                    <TD PORT="template_id_to">🔑</TD>
+                    <TD PORT="template_id_from">template_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="timestamp_to">&nbsp;</TD>
+                    <TD PORT="timestamp_from">timestamp</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="description_to">&nbsp;</TD>
+                    <TD PORT="description_from">description</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="text_to">&nbsp;</TD>
+                    <TD PORT="text_from">text</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="capability_id_to">&nbsp;</TD>
+                    <TD PORT="capability_id_from">capability_id</TD>
+                </TR>
+            
+            </TABLE>
+        >];
+        
 tests [label=<
             <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
                 <TR>
@@ -259,10 +457,16 @@ tests [label=<
             </TABLE>
         >];
         
-tests:right_exec_id_from:e -> execs:exec_id_to:w
-tests:left_exec_id_from:e -> execs:exec_id_to:w
-execs:code_id_from:e -> codes:code_id_to:w
+parameters:capability_id_from:e -> capabilities:capability_id_to:w
+parameters:argument_id_from:e -> arguments:argument_id_to:w
+templates:capability_id_from:e -> capabilities:capability_id_to:w
+arguments:model_id_from:e -> models:model_id_to:w
+capabilities:library_id_from:e -> libraries:library_id_to:w
+capabilities:model_id_from:e -> models:model_id_to:w
 codes:param_id_from:e -> params:param_id_to:w
 codes:datafile_id_from:e -> datafiles:datafile_id_to:w
+execs:code_id_from:e -> codes:code_id_to:w
+tests:right_exec_id_from:e -> execs:exec_id_to:w
+tests:left_exec_id_from:e -> execs:exec_id_to:w
 
 }
