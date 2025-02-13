@@ -57,4 +57,40 @@ CREATE TABLE IF NOT EXISTS "tests" (
 	FOREIGN KEY (right_exec_id) REFERENCES execs(exec_id)
 );
 
+CREATE TABLE IF NOT EXISTS "models" (
+	"model_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
+	"description"	TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "libraries" (
+	"library_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
+	"description"	TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "capabilities" (
+	"capability_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
+	'model_id' INTEGER NOT NULL,
+	'library_id' INTEGER NOT NULL,
+	FOREIGN KEY (model_id) REFERENCES models(model_id),	
+	FOREIGN KEY (library_id) REFERENCES libraries(library_id)
+);
+
+CREATE TABLE IF NOT EXISTS "arguments" (
+	"argument_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
+	"description"	TEXT NOT NULL,
+	"value"		TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS "templates" (
+	"template_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
+	"description"	TEXT NOT NULL,
+	"text"		TEXT NOT NULL
+);
+
+/* TODO redefine parameters */
+
 COMMIT;
