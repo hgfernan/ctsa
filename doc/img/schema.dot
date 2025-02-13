@@ -96,6 +96,12 @@ codes [label=<
             
 
                 <TR>
+                    <TD PORT="filename_to">&nbsp;</TD>
+                    <TD PORT="filename_from">filename</TD>
+                </TR>
+            
+
+                <TR>
                     <TD PORT="datafile_id_to">&nbsp;</TD>
                     <TD PORT="datafile_id_from">datafile_id</TD>
                 </TR>
@@ -134,8 +140,8 @@ datafiles [label=<
             
 
                 <TR>
-                    <TD PORT="filename_to">&nbsp;</TD>
-                    <TD PORT="filename_from">filename</TD>
+                    <TD PORT="from_name_to">&nbsp;</TD>
+                    <TD PORT="from_name_from">from_name</TD>
                 </TR>
             
 
@@ -184,6 +190,12 @@ execs [label=<
             
 
                 <TR>
+                    <TD PORT="exit_code_to">&nbsp;</TD>
+                    <TD PORT="exit_code_from">exit_code</TD>
+                </TR>
+            
+
+                <TR>
                     <TD PORT="elapsed_time_to">&nbsp;</TD>
                     <TD PORT="elapsed_time_from">elapsed_time</TD>
                 </TR>
@@ -222,8 +234,14 @@ libraries [label=<
             
 
                 <TR>
-                    <TD PORT="description_to">&nbsp;</TD>
-                    <TD PORT="description_from">description</TD>
+                    <TD PORT="name_to">&nbsp;</TD>
+                    <TD PORT="name_from">name</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="version_to">&nbsp;</TD>
+                    <TD PORT="version_from">version</TD>
                 </TR>
             
             </TABLE>
@@ -244,6 +262,12 @@ models [label=<
                 <TR>
                     <TD PORT="timestamp_to">&nbsp;</TD>
                     <TD PORT="timestamp_from">timestamp</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="name_to">&nbsp;</TD>
+                    <TD PORT="name_from">name</TD>
                 </TR>
             
 

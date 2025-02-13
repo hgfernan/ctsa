@@ -3,7 +3,7 @@ BEGIN TRANSACTION;
 CREATE TABLE IF NOT EXISTS "datafiles" (
 	"datafile_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
-	"filename"	TEXT NOT NULL,
+	"from_name"	TEXT NOT NULL,
 	"total_recs"	INTEGER NOT NULL,
 	"description"	TEXT NOT NULL
 );
@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS "paramlims" (
 CREATE TABLE IF NOT EXISTS "codes" (
 	"code_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
+	"filename"		TEXT NOT NULL,
 	"datafile_id"	INTEGER NOT NULL,
 	"parameter_id"	INTEGER NOT NULL,
 	"template_id"	INTEGER NOT NULL,
@@ -44,6 +45,7 @@ CREATE TABLE IF NOT EXISTS "execs" (
 	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
 	"code_id"	INTEGER NOT NULL,
 	"sys_desc"	TEXT NOT NULL,
+	"exit_code"	INTEGER NOT NULL,
 	"elapsed_time"	NUMERIC NOT NULL,
 	"process_time"	NUMERIC NOT NULL,
 	"value"	    TEXT NOT NULL,
@@ -64,13 +66,15 @@ CREATE TABLE IF NOT EXISTS "tests" (
 CREATE TABLE IF NOT EXISTS "models" (
 	"model_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
+	"name"		TEXT NOT NULL,
 	"description"	TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "libraries" (
 	"library_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
-	"description"	TEXT NOT NULL
+	"name"		TEXT NOT NULL,
+	"version"	TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "capabilities" (
