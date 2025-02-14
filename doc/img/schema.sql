@@ -8,17 +8,8 @@ CREATE TABLE IF NOT EXISTS "datafiles" (
 	"description"	TEXT NOT NULL
 );
 
-/*
-CREATE TABLE IF NOT EXISTS "params" (
-	"param_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
-	"model"		TEXT NOT NULL,
-	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
-	"value"		TEXT NOT NULL
-);
- */
-
-CREATE TABLE IF NOT EXISTS "paramlims" (
-	"paramlim_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE IF NOT EXISTS "argumentlims" (
+	"argumentlim_id" INTEGER PRIMARY KEY AUTOINCREMENT,
 	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
 	"extreme_min"	TEXT NOT NULL,
 	"extreme_max"	TEXT NOT NULL,
@@ -33,10 +24,10 @@ CREATE TABLE IF NOT EXISTS "codes" (
 	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
 	"filename"		TEXT NOT NULL,
 	"datafile_id"	INTEGER NOT NULL,
-	"parameter_id"	INTEGER NOT NULL,
+	"param_id"		INTEGER NOT NULL,
 	"template_id"	INTEGER NOT NULL,
 	FOREIGN KEY (datafile_id) REFERENCES datafiles(datafile_id),	
-	FOREIGN KEY (parameter_id) REFERENCES parameters(parameter_id),
+	FOREIGN KEY (param_id) REFERENCES params(param_id),
 	FOREIGN KEY (template_id) REFERENCES templates(template_id)
 );
 
@@ -96,22 +87,23 @@ CREATE TABLE IF NOT EXISTS "arguments" (
 );
 CREATE TABLE IF NOT EXISTS "templates" (
 	"template_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
-	"timestamp"	TEXT NOT NULL DEFAULT 'date()',
+	"timestamp"		TEXT NOT NULL DEFAULT 'date()',
 	"description"	TEXT NOT NULL,
-	"text"		TEXT NOT NULL,
-	"capability_id"	TEXT NOT NULL,
+	"text"			TEXT NOT NULL,
+	"capability_id"	INTEGER NOT NULL,
 	FOREIGN KEY (capability_id) REFERENCES capabilities(capability_id)
 );
 
-
-CREATE TABLE IF NOT EXISTS "parameters" (
-	"parameter_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE IF NOT EXISTS "params" (
+	"param_id"	INTEGER PRIMARY KEY AUTOINCREMENT,
 	"timestamp"		TEXT NOT NULL DEFAULT 'date()',
 	"value"			TEXT NOT NULL,
-	"argument_id"	TEXT NOT NULL,
-	"capability_id"	TEXT NOT NULL,
+	"argument_id"	INTEGER NOT NULL,
+	"capability_id"	INTEGER NOT NULL,
+	"template_id"	INTEGER NOT NULL,	
 	FOREIGN KEY (argument_id) REFERENCES arguments(argument_id),	
-	FOREIGN KEY (capability_id) REFERENCES capabilities(capability_id)
+	FOREIGN KEY (capability_id) REFERENCES capabilities(capability_id),	
+	FOREIGN KEY (template_id) REFERENCES templates(template_id)
 );
 
 COMMIT;

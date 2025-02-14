@@ -7,6 +7,56 @@ rankdir="LR"
 
 node [shape=none]
 
+argumentlims [label=<
+            <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
+                <TR>
+                    <TD COLSPAN="2"><B>argumentlims</B></TD>
+                </TR>
+            
+                <TR>
+                    <TD PORT="argumentlim_id_to">🔑</TD>
+                    <TD PORT="argumentlim_id_from">argumentlim_id</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="timestamp_to">&nbsp;</TD>
+                    <TD PORT="timestamp_from">timestamp</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="extreme_min_to">&nbsp;</TD>
+                    <TD PORT="extreme_min_from">extreme_min</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="extreme_max_to">&nbsp;</TD>
+                    <TD PORT="extreme_max_from">extreme_max</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="created_min_to">&nbsp;</TD>
+                    <TD PORT="created_min_from">created_min</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="created_max_to">&nbsp;</TD>
+                    <TD PORT="created_max_from">created_max</TD>
+                </TR>
+            
+
+                <TR>
+                    <TD PORT="model_id_to">&nbsp;</TD>
+                    <TD PORT="model_id_from">model_id</TD>
+                </TR>
+            
+            </TABLE>
+        >];
+        
 arguments [label=<
             <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
                 <TR>
@@ -108,8 +158,8 @@ codes [label=<
             
 
                 <TR>
-                    <TD PORT="parameter_id_to">&nbsp;</TD>
-                    <TD PORT="parameter_id_from">parameter_id</TD>
+                    <TD PORT="param_id_to">&nbsp;</TD>
+                    <TD PORT="param_id_from">param_id</TD>
                 </TR>
             
 
@@ -279,15 +329,15 @@ models [label=<
             </TABLE>
         >];
         
-parameters [label=<
+params [label=<
             <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
                 <TR>
-                    <TD COLSPAN="2"><B>parameters</B></TD>
+                    <TD COLSPAN="2"><B>params</B></TD>
                 </TR>
             
                 <TR>
-                    <TD PORT="parameter_id_to">🔑</TD>
-                    <TD PORT="parameter_id_from">parameter_id</TD>
+                    <TD PORT="param_id_to">🔑</TD>
+                    <TD PORT="param_id_from">param_id</TD>
                 </TR>
             
 
@@ -314,54 +364,10 @@ parameters [label=<
                     <TD PORT="capability_id_from">capability_id</TD>
                 </TR>
             
-            </TABLE>
-        >];
-        
-paramlims [label=<
-            <TABLE BORDER="0" CELLSPACING="0" CELLBORDER="1">
-                <TR>
-                    <TD COLSPAN="2"><B>paramlims</B></TD>
-                </TR>
-            
-                <TR>
-                    <TD PORT="paramlim_id_to">🔑</TD>
-                    <TD PORT="paramlim_id_from">paramlim_id</TD>
-                </TR>
-            
 
                 <TR>
-                    <TD PORT="timestamp_to">&nbsp;</TD>
-                    <TD PORT="timestamp_from">timestamp</TD>
-                </TR>
-            
-
-                <TR>
-                    <TD PORT="extreme_min_to">&nbsp;</TD>
-                    <TD PORT="extreme_min_from">extreme_min</TD>
-                </TR>
-            
-
-                <TR>
-                    <TD PORT="extreme_max_to">&nbsp;</TD>
-                    <TD PORT="extreme_max_from">extreme_max</TD>
-                </TR>
-            
-
-                <TR>
-                    <TD PORT="created_min_to">&nbsp;</TD>
-                    <TD PORT="created_min_from">created_min</TD>
-                </TR>
-            
-
-                <TR>
-                    <TD PORT="created_max_to">&nbsp;</TD>
-                    <TD PORT="created_max_from">created_max</TD>
-                </TR>
-            
-
-                <TR>
-                    <TD PORT="model_id_to">&nbsp;</TD>
-                    <TD PORT="model_id_from">model_id</TD>
+                    <TD PORT="template_id_to">&nbsp;</TD>
+                    <TD PORT="template_id_from">template_id</TD>
                 </TR>
             
             </TABLE>
@@ -449,15 +455,16 @@ tests [label=<
             </TABLE>
         >];
         
-parameters:capability_id_from:e -> capabilities:capability_id_to:w
-parameters:argument_id_from:e -> arguments:argument_id_to:w
+params:template_id_from:e -> templates:template_id_to:w
+params:capability_id_from:e -> capabilities:capability_id_to:w
+params:argument_id_from:e -> arguments:argument_id_to:w
 templates:capability_id_from:e -> capabilities:capability_id_to:w
 arguments:model_id_from:e -> models:model_id_to:w
 capabilities:library_id_from:e -> libraries:library_id_to:w
 capabilities:model_id_from:e -> models:model_id_to:w
-paramlims:model_id_from:e -> models:model_id_to:w
+argumentlims:model_id_from:e -> models:model_id_to:w
 codes:template_id_from:e -> templates:template_id_to:w
-codes:parameter_id_from:e -> parameters:parameter_id_to:w
+codes:param_id_from:e -> params:param_id_to:w
 codes:datafile_id_from:e -> datafiles:datafile_id_to:w
 execs:code_id_from:e -> codes:code_id_to:w
 tests:right_exec_id_from:e -> execs:exec_id_to:w
