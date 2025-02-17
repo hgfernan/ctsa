@@ -1,0 +1,95 @@
+[  1%] Building C object src/CMakeFiles/ctsalib.dir/autoutils.c.o
+[  2%] Building C object src/CMakeFiles/ctsalib.dir/boxcox.c.o
+[  3%] Building C object src/CMakeFiles/ctsalib.dir/boxjenkins.c.o
+[  5%] Building C object src/CMakeFiles/ctsalib.dir/brent.c.o
+[  6%] Building C object src/CMakeFiles/ctsalib.dir/conjgrad.c.o
+[  7%] Building C object src/CMakeFiles/ctsalib.dir/conv.c.o
+[  9%] Building C object src/CMakeFiles/ctsalib.dir/ctsa.c.o
+[ 10%] Building C object src/CMakeFiles/ctsalib.dir/dist.c.o
+[ 11%] Building C object src/CMakeFiles/ctsalib.dir/emle.c.o
+[ 12%] Building C object src/CMakeFiles/ctsalib.dir/erfunc.c.o
+[ 14%] Building C object src/CMakeFiles/ctsalib.dir/filter.c.o
+[ 15%] Building C object src/CMakeFiles/ctsalib.dir/hsfft.c.o
+[ 16%] Building C object src/CMakeFiles/ctsalib.dir/initest.c.o
+[ 18%] Building C object src/CMakeFiles/ctsalib.dir/lls.c.o
+[ 19%] Building C object src/CMakeFiles/ctsalib.dir/lnsrchmp.c.o
+[ 20%] Building C object src/CMakeFiles/ctsalib.dir/matrix.c.o
+[ 22%] Building C object src/CMakeFiles/ctsalib.dir/neldermead.c.o
+[ 23%] Building C object src/CMakeFiles/ctsalib.dir/newtonmin.c.o
+[ 24%] Building C object src/CMakeFiles/ctsalib.dir/nls.c.o
+[ 25%] Building C object src/CMakeFiles/ctsalib.dir/optimc.c.o
+[ 27%] Building C object src/CMakeFiles/ctsalib.dir/pdist.c.o
+[ 28%] Building C object src/CMakeFiles/ctsalib.dir/polyroot.c.o
+[ 29%] Building C object src/CMakeFiles/ctsalib.dir/pred.c.o
+[ 31%] Building C object src/CMakeFiles/ctsalib.dir/real.c.o
+[ 32%] Building C object src/CMakeFiles/ctsalib.dir/regression.c.o
+[ 33%] Building C object src/CMakeFiles/ctsalib.dir/secant.c.o
+[ 35%] Building C object src/CMakeFiles/ctsalib.dir/spectrum.c.o
+[ 36%] Building C object src/CMakeFiles/ctsalib.dir/stats.c.o
+[ 37%] Building C object src/CMakeFiles/ctsalib.dir/stl.c.o
+[ 38%] Building C object src/CMakeFiles/ctsalib.dir/talg.c.o
+[ 40%] Building C object src/CMakeFiles/ctsalib.dir/errors.c.o
+[ 41%] Building C object src/CMakeFiles/ctsalib.dir/unitroot.c.o
+[ 42%] Building C object src/CMakeFiles/ctsalib.dir/seastest.c.o
+[ 44%] Building C object src/CMakeFiles/ctsalib.dir/wtmath.c.o
+[ 45%] Building C object src/CMakeFiles/ctsalib.dir/wavefilt.c.o
+[ 46%] Building C object src/CMakeFiles/ctsalib.dir/wavelib.c.o
+[ 48%] Linking C static library ../Bin/DEBUG/libctsalib.a
+[ 48%] Built target ctsalib
+[ 49%] Building C object test/CMakeFiles/acftest.dir/acftest.c.o
+[ 50%] Linking C executable ../Bin/DEBUG/acftest
+[ 50%] Built target acftest
+[ 51%] Building C object test/CMakeFiles/arimatest.dir/arimatest.c.o
+[ 53%] Linking C executable ../Bin/DEBUG/arimatest
+[ 53%] Built target arimatest
+[ 54%] Building C object test/CMakeFiles/artest.dir/artest.c.o
+[ 55%] Linking C executable ../Bin/DEBUG/artest
+[ 55%] Built target artest
+[ 57%] Building C object test/CMakeFiles/artest2.dir/artest2.c.o
+[ 58%] Linking C executable ../Bin/DEBUG/artest2
+[ 58%] Built target artest2
+[ 59%] Building C object test/CMakeFiles/pacftest.dir/pacftest.c.o
+[ 61%] Linking C executable ../Bin/DEBUG/pacftest
+[ 61%] Built target pacftest
+[ 62%] Building C object test/CMakeFiles/sarimatest.dir/sarimatest.c.o
+[ 63%] Linking C executable ../Bin/DEBUG/sarimatest
+[ 63%] Built target sarimatest
+[ 64%] Building C object test/CMakeFiles/sarimatest2.dir/sarimatest2.c.o
+[ 66%] Building C object test/CMakeFiles/sarimatest2.dir/auxlib.c.o
+[ 67%] Building C object test/CMakeFiles/sarimatest2.dir/csv_in.c.o
+[ 68%] Linking C executable ../Bin/DEBUG/sarimatest2
+[ 68%] Built target sarimatest2
+[ 70%] Building C object test/CMakeFiles/sarimatest3.dir/sarimatest3.c.o
+[ 71%] Building C object test/CMakeFiles/sarimatest3.dir/auxlib.c.o
+[ 72%] Building C object test/CMakeFiles/sarimatest3.dir/csv_in.c.o
+[ 74%] Linking C executable ../Bin/DEBUG/sarimatest3
+[ 74%] Built target sarimatest3
+[ 75%] Building C object test/CMakeFiles/misctests.dir/misctests.c.o
+[ 76%] Linking C executable ../Bin/DEBUG/misctests
+[ 76%] Built target misctests
+[ 77%] Building C object test/CMakeFiles/dwttests.dir/dwttests.c.o
+[ 79%] Linking C executable ../Bin/DEBUG/dwttests
+[ 79%] Built target dwttests
+[ 80%] Building C object test/CMakeFiles/sarimaxtest1.dir/sarimaxtest1.c.o
+[ 81%] Linking C executable ../Bin/DEBUG/sarimaxtest1
+[ 81%] Built target sarimaxtest1
+[ 83%] Building C object test/CMakeFiles/sarimaxtest2.dir/sarimaxtest2.c.o
+[ 84%] Linking C executable ../Bin/DEBUG/sarimaxtest2
+[ 84%] Built target sarimaxtest2
+[ 85%] Building C object test/CMakeFiles/sarimaxtest3.dir/sarimaxtest3.c.o
+[ 87%] Linking C executable ../Bin/DEBUG/sarimaxtest3
+[ 87%] Built target sarimaxtest3
+[ 88%] Building C object test/CMakeFiles/autoarimatest1.dir/autoarimatest1.c.o
+[ 89%] Linking C executable ../Bin/DEBUG/autoarimatest1
+[ 89%] Built target autoarimatest1
+[ 90%] Building C object test/CMakeFiles/autoarimatest2.dir/autoarimatest2.c.o
+[ 92%] Linking C executable ../Bin/DEBUG/autoarimatest2
+[ 92%] Built target autoarimatest2
+[ 93%] Building C object test/CMakeFiles/autoarimatest3.dir/autoarimatest3.c.o
+[ 94%] Linking C executable ../Bin/DEBUG/autoarimatest3
+[ 94%] Built target autoarimatest3
+[ 96%] Building C object test_gen/CMakeFiles/artest_templ.dir/artest_templ.c.o
+[ 97%] Building C object test_gen/CMakeFiles/artest_templ.dir/auxlib.c.o
+[ 98%] Building C object test_gen/CMakeFiles/artest_templ.dir/csv_in.c.o
+[100%] Linking C executable ../Bin/DEBUG/ctsa/artest_templ
+[100%] Built target artest_templ

@@ -14,5 +14,5 @@ target_link_libraries(artest_templ ctsalib m)
 
 set_target_properties(artest_templ
         PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}"
+        RUNTIME_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}/ctsa"
 )

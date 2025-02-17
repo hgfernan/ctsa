@@ -84,7 +84,7 @@ in their content. There will be a class for each one of the
 models, that will be able to unpack and allow the use of the
 information in those JSON values.
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \includegraphics[scale=0.35]
         {../img/schema.jpg}
@@ -205,10 +205,21 @@ A short description of the data base structure displayed in Figure
 
         For instance: if a {\tt codes} row with {\tt code\_id}
         of $15$, uses a C code template of library {\tt ctsa},
-        its filename would ``{\tt 0015.c}''. But if it uses the
-        $AR$ model implementation of {\tt ctsa}, uses the 1st row
-        of parameters, and the {\tt datafile\_id} of $23$, its
-        extended name will be ``{\tt ar\_ctsa\_p0001\_d0023.c}''
+        its source code filename would be ``{\tt 0015.c}''. But
+        there's a lot of parameters to consider when dealing with
+        source code files, so another naming scheme will be used.
+
+        If the code uses the $AR$ model implementation of
+        {\tt ctsa}, uses the 1st group of parameters, and the
+        {\tt datafile\_id} of $23$, the extended name of its
+        source code will be ``{\tt ar\_ctsa\_p0001\_d0023.c}''.
+
+        In a typical Linux setup the executable name will be
+        ``{\tt ar\_ctsa\_p0001\_d0023}'', and in a Microsoft
+        Windows setup it will be
+        ``{\tt ar\_ctsa\_p0001\_d0023.exe}''. However, the
+        Windows version of the software will be postponed for
+        a while.
 
     \item \label{itm:paramlims}
         The table {\tt paramlims} contains the valid range of
@@ -398,7 +409,68 @@ A short description of the data base structure displayed in Figure
 \section{Software design}
 \label{sec:design}
 
-{\em High level specification of the softwares and their use.}
+The operation of the software has the following steps:
+
+\begin{enumerate}
+    \item {\bf Data transcription}: The data series files
+        available are adapted to a simple format CSV format that
+        contains only an index column, and a value column.
+
+        The table {\tt file\_db.csv} contains a mapping to the
+        original data and information on the column that was
+        used. For original data files with several value columns,
+        several files in this simple format can be generated.
+
+        This phase is partly manual, in the configuration of the
+        {\tt file\_db.csv} file for each original datafile, and
+        partly automatic, since the program {\tt cvt\_test.py}
+        will convert automatically the data files to this test
+        format, provided they're configured in {\tt file\_db.csv}
+
+    \item {\bf Template creation}: This step is totally manual,
+        and contains three substeps:
+
+        \begin{enumerate}
+            \item \label{itm:ctsa}
+                The existing {\tt ctsa} test files are used to
+                create {\tt C} source code templates as Python
+                strings that will have the parameter information
+                filled in.
+
+                From the {\tt ctsa} source code templates it is
+                extracted the statistical parameters that are
+                named {\em arguments} in this context: they are
+                the theoretical and universal part of the
+                configuration used to be run the {\tt ctsa} code.
+                The pratical configuration, that includes parts
+                specific to {\tt ctsa} code is named
+                {\em paramters};
+
+            \item \label{itm:Python}
+                One or more Python libraries is identified with
+                exactly the same algoritm as in {\tt ctsa}.
+
+                The chosen library or libraries should accept the
+                {\em arguments} (see the item \ref{itm:ctsa}),
+                but there's liberty to adjust the {\em arguments}
+                to the library using a group of
+                {\em parameters} specific to it;
+
+                Currently, only {\tt statsmodels} is being
+                considered for generic algorithms, and
+                {\tt pmdarima} for automated hyperparameter
+                tuning. But other libraries are available. In any
+                case, the data structure defines templates by
+                library, not by language. Therefore, any number
+                of libraries with different languages can be used,
+                provided they have the same algorithm as {\tt ctsa};
+
+            \item \label{itm:R}
+
+        \end{enumerate}
+
+\end{enumerate}
+
 
 \section{Examples by hand}
 \label{sec:by_hand}

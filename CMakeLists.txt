@@ -39,6 +39,6 @@ include_directories(${COMMON_BIN_PATH})
 
 add_subdirectory(src)
 add_subdirectory(test) 
-add_subdirectory(testdata) 
+add_subdirectory(test_gen) 
 
 install(DIRECTORY ${CTSA_SRC_ROOT}/include/ DESTINATION include FILES_MATCHING PATTERN "*.h")
