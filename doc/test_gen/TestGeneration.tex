@@ -427,7 +427,8 @@ The operation of the software has the following steps:
         will convert automatically the data files to this test
         format, provided they're configured in {\tt file\_db.csv}
 
-    \item {\bf Template creation}: This step is totally manual,
+    \item \label{itm:creation_step}
+        {\bf Template creation}: This step is totally manual,
         and contains three substeps:
 
         \begin{enumerate}
@@ -447,8 +448,9 @@ The operation of the software has the following steps:
                 {\em paramters};
 
             \item \label{itm:Python}
-                One or more Python libraries is identified with
-                exactly the same algoritm as in {\tt ctsa}.
+                One or more Python libraries are identified with
+                exactly the one or more algorithms that are the
+                same as the ones in {\tt ctsa}.
 
                 The chosen library or libraries should accept the
                 {\em arguments} (see the item \ref{itm:ctsa}),
@@ -463,11 +465,90 @@ The operation of the software has the following steps:
                 case, the data structure defines templates by
                 library, not by language. Therefore, any number
                 of libraries with different languages can be used,
-                provided they have the same algorithm as {\tt ctsa};
+                provided they have the same algorithm as
+                {\tt ctsa}.
+
+                In this substep, study and manual programming will
+                lead to templates and parameters that generate
+                results equivalent to the ones of {\tt ctsa};
 
             \item \label{itm:R}
+                One or more R libraries are identified with
+                exactly the one or more algorithms that are the
+                same as the ones in {\tt ctsa}.
+
+                The chosen library or libraries should accept the
+                {\em arguments} (see the item \ref{itm:ctsa}),
+                but there's liberty to adjust the {\em arguments}
+                to the library using a group of
+                {\em parameters} specific to it;
+
+                Currently, only Hyndman's {\tt forecast} is being
+                considered. Under the covers, {\tt forecast} uses
+                the package {\tt stats} for generic algorithms,
+                and implements an automated hyperparameter tuning
+                named {\tt auto.arima}. Other R libraries are
+                available, like {\tt fable} by the same research
+                group of Monash University.
+
+                In any case, the data structure defines templates
+                by library, not by language. Therefore, any number
+                of libraries with different languages can be used,
+                provided they have the same algorithm as
+                {\tt ctsa};
+
+                In this substep, study and manual programming will
+                lead to templates and parameters that generate
+                results equivalent to the ones of {\tt ctsa};
 
         \end{enumerate}
+
+    \item \label{itm:generation}
+        {\bf Code generation}: This step is totally automatic, and
+        from the data files, the templates and parameters, codes
+        are generated.
+
+        They will be compiled or simply installed in the next
+        step (item \ref{itm:compilation});
+
+    \item \label{itm:compilation}
+        {\bf Compilation or installation}: In this step, the
+        {\tt C} codes are compiled, and transferred to the
+        folder of their base libraries; the Python and R codes
+        are just installed in the folder of their base libraries,
+        but the installation makes sure that the setup has the
+        expected libraries.
+
+        In more detail: the {\tt C} code is compiled against the
+        {\tt ctsa} library only and some care was taken to not use
+        other libraries. But the Python and R codes should
+        be guaranteed to have installed all the packages or
+        modules they need.
+
+        Any compilation failure, or absence of the needed package
+        will generate a failure message in the compilation log.
+
+    \item \label{itm:execution}
+        {\bf Execution}: This phase causes the results to be
+        generated. For each execution the master database is
+        updated, the code output (containing a statistical summary
+        or a failure message) is redirected to a file named
+        according to the code and execution, and a new entry is
+        generated in the log of executions;
+
+    \item \label{itm:comparison}
+        {\bf Comparison and test}: This phase will give tools to
+        finally test the results of the executions. This allows
+        different versions of the same library to be compared,
+        as well as the results of the execution of codes using
+        two different libraries. In any case, a valid comparison
+        will demand the same statistical model, the same
+        {\em arguments}, defined in item \ref{itm:ctsa}. To have
+        a performance comparison, the same hardware should be
+        considere. That's provided in the system description of
+        each execution, contained in the field {\tt sys\_dec} of
+        the table {\tt execs}, that's defined in the item
+        \ref{itm:execs} of the section \nameref{sec:tables}.
 
 \end{enumerate}
 
