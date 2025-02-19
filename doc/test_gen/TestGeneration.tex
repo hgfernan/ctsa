@@ -551,7 +551,18 @@ The operation of the software has the following steps:
         \ref{itm:execs} of the section \nameref{sec:tables}.
 
     \item \label{itm:more_arguments}
-        {\bf Additional step -- More arguments}
+        {\bf Additional step -- More arguments}:
+        Many of the tests in the current distribution of
+        {\tt ctsa} use just a single parameter for model. But
+        obviously the testing will be much more complete if a
+        larger number of parameters, in different ranges, are
+        used. This module will be used to improve such quantity.
+
+        As of now there's not a policy of adding more parameter
+        values, but the data structure available in table
+        {\tt paramlims} seems to be flexible enough to accomodate
+        any policy:  only the upper and lower limits are
+        considered.
 
 \end{enumerate}
 
