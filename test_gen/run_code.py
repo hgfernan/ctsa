@@ -149,13 +149,13 @@ def main(argv : List[str]) -> int:
             print(code_name)
             
             executable_name = \
-                get_executable_root() + '/' +\
                 bld_executable_path(params.library, code_name)
             
             try:
                 # TODO get the exec_id from the database
                 exec_id = 1
                 proc = subprocess.run([executable_name, str(exec_id)], 
+                                    cwd=get_executable_root(),
                                     stdout=subprocess.PIPE,
                                     stderr=subprocess.PIPE, 
                                     check=True
