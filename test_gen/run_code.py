@@ -20,6 +20,9 @@ from typing import List
 def get_executable_root() -> str:
     return '../Bin/DEBUG'
 
+def get_out_prefix(library : str, model : str) -> str :
+    return get_executable_root() + '/' + library.lower() + '/' + model.lower()
+
 def bld_range(first : int, last : int = None) -> range:
     if first is None:
         msg : str = 'The first parameter must be an integer, not `None`'
@@ -160,9 +163,22 @@ def main(argv : List[str]) -> int:
                                     stderr=subprocess.PIPE, 
                                     check=True
                                    )
-                    
-                print(proc.stderr)
-                print(proc.stdout.decode(encoding='utf-8'))
+                
+                err_str : str = proc.stderr.decode(encoding='utf-8')
+                if len(err_str) > 0:
+                    err_name : str = \
+                        get_out_prefix(params.library, params.model)
+                    err_name + f'/exec_errs/{exec_id:04d}.err'
+                    err_f = open(err_name, 'w')
+                    err_f.write(err_str)
+                    err_f.close()
+                
+                log_str : str = proc.stdout.decode(encoding='utf-8')
+                log_name : str = get_out_prefix(params.library, params.model)
+                log_name += f'/exec_logs/{exec_id:04d}.log'
+                log_f = open(log_name, 'w')
+                log_f.write(log_str)
+                log_f.close()
                 
             except FileNotFoundError as exc:
                 print(f'{type(exc).__name__}: {str(exc)}')

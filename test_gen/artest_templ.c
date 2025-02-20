@@ -93,7 +93,7 @@ int main(int argc, char* const* argv) {
 	duration = (stop - start) / (double)CLOCKS_PER_SEC;
 
 	/* Saving the results and parameters as JSON file */
-	sprintf(buf, "json/%04d.json", exec_id);
+	sprintf(buf, "ar/json/%04d.json", exec_id);
 	json_out = fopen(buf, "w");
 	
 	if (! json_out) {
