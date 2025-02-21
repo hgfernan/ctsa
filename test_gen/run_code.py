@@ -110,18 +110,18 @@ def parse_cli(argv : List[str]) -> argparse.Namespace:
     desc : str = 'Start sequentially a series of programs'
     parser = argparse.ArgumentParser(description=desc)
 
-    help_str : str = 'Statistical model to be used'
-    choices : List[str] = ['AR', 'ARIMA', 'SARIMA', 'SARIMAX']
-    parser.add_argument('-m', '--model', choices=choices,
-                        required=True, help=help_str
-                       )
-
     help_str : str = 'Statistical library'
     choices = ['ctsa', 'forecast', 'pmdarima', 'statsmodels']
     parser.add_argument('-l', '--library',
                         choices=choices,
                         required=True,
                         help=help_str
+                       )
+
+    help_str = 'Statistical model to be used'
+    choices : List[str] = ['AR', 'ARIMA', 'SARIMA', 'SARIMAX']
+    parser.add_argument('-m', '--model', choices=choices,
+                        required=True, help=help_str
                        )
 
     help_str = 'First of a range of parameter identification numbers'
@@ -140,7 +140,7 @@ def parse_cli(argv : List[str]) -> argparse.Namespace:
                         help=help_str
                        )
 
-    help_str = 'First of a range of data identification numbers, '
+    help_str = 'Last of a range of data identification numbers, '
     help_str += 'including'
     parser.add_argument('-d', '--data_last', type=int,
                         help=help_str
