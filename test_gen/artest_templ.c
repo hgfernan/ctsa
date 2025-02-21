@@ -62,6 +62,7 @@ int main(int argc, char* const* argv) {
 	if (0 == n_rows) {
 		printf("%s: ERROR Could not load data from file '%s'\n", 
 			argv[0], DATA_IN);
+		fflush(stdout);
 		
 		/* Return to indicate failure*/
 		return 1;
@@ -99,6 +100,7 @@ int main(int argc, char* const* argv) {
 	if (! json_out) {
 		printf("%s: ERROR Could not open file '%s' for output\n", 
 			argv[0], buf);
+		fflush(stdout);
 		
 		/* Return to indicate failure*/
 		return 2;
