@@ -9,10 +9,12 @@ Created on Mon Feb 10 20:06:16 2025
 
 import sys      # argv, exit()
 import signal   # Signal
+import sqlite3  # connect(), cursor(), execute()
 # import os.path  # exists()
 import argparse # class ArgumentParser, class Namespace
 import subprocess # class CalledProcessError, run()
 
+from typing import List, Tuple
 
 from types  import SimpleNamespace
 from typing import List
@@ -272,8 +274,8 @@ def save_output(exec_id : int, out_prefix : str, o_type : str, o_buf : bytes) \
     if o_type not in ['err', 'log']:
         return False
 
-    out_str : str = o_buf.decode(encoding='utf-8')
-    if len(out_str) > 0:
+    if len(o_buf) > 0:
+        out_str : str = o_buf.decode(encoding='utf-8')
         out_pre : str = out_prefix + '/exec_' + o_type + 's' + '/'
         out_ext : str = '.' + o_type
         out_name : str = out_pre + f'{exec_id:04d}' + out_ext
@@ -285,7 +287,8 @@ def save_output(exec_id : int, out_prefix : str, o_type : str, o_buf : bytes) \
     # Normal function termination
     return True
 
-
+def get_next_exec() -> Tuple[int, ]:
+    
 def main(argv : List[str]) -> int:
     """
     Parse command line, execute programs and save their results
@@ -370,32 +373,37 @@ def main(argv : List[str]) -> int:
 
             except FileNotFoundError as exc:
                 print(f'{type(exc).__name__}: {str(exc)}')
-                print(f'{get_executable_folder(params.library)}')
                 
+                rv : bool = True
+                # msg : str = f'{type(exc).__name__}: {str(exc)}'                
+                msg : str = f'{type(exc).__name__}: {str(exc)}'                
+                rv = save_output(exec_id,
+                                 get_out_prefix(params.library, params.model),
+                                 'err',
+                                msg.encode('utf-8')
+                                )
+                # TODO handle save_output() failure
 
+                print(msg)
+
+            except subprocess.CalledProcessError as exc:
+                msg : str = ''
+                msg += f'{type(exc).__name__}: {str(exc)}\n'
+                msg += f'Return code {exc.returncode}\n' 
+                if exc.returncode < 0:
+                    msg += f'Signal: {signal.Signals(-exc.returncode).name})\n'
+
+                print(type(exc.output))
+                msg += '\n' + 40*'-' + '\n\n'
+                msg += exc.output.decode(encoding='utf-8') + '\n'
+                print(msg)
+                
                 rv : bool = True
                 rv = save_output(exec_id,
                                  get_out_prefix(params.library, params.model),
                                  'err',
-                                 f'{type(exc).__name__}: {str(exc)}'
-                                )
-                # TODO handle save_output() failure
-
-                # print(f'exc.returncode {exc.returncode}')
-                # print(exc.output)
-                print(exc.__dict__)
-
-            except subprocess.CalledProcessError as exc:
-                print(f'{type(exc).__name__}: {str(exc)}')
-                print(dir(exc))
-
-                print(f'exc.returncode {exc.returncode}')
-                print(exc.output)
-                print(exc.__dict__)
-
-                print(exc.stdout)
-                if exc.returncode < 0:
-                    print(signal.Signals(-exc.returncode).name)
+                                 msg.encode(encoding='utf-8')
+                                )                
 
             finally:
                 exec_id += 1
