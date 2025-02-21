@@ -77,6 +77,12 @@ read_csv_column(const char* csv_name, const char* col_name, double** column)
 		
         return (size_t)0;
     }
+    
+    /** HINT Strip newline */
+    result = strlen(buf);
+    if (buf[result - 1] == '\n') {
+		buf[result - 1] = '\0';
+	}
 	
 	n_columns = split_fields(buf, ",", &columns);
 	

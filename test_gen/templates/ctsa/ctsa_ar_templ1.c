@@ -58,7 +58,7 @@ int main(int argc, char* const* argv) {
 	xpred = (double*)calloc(sizeof(double),  L);
 	amse = (double*)calloc(sizeof(double), L);
 
-	n_rows = read_csv_column(DATA_IN, "Close", &inp);
+	n_rows = read_csv_column(DATA_IN, "value", &inp);
 	if (0 == n_rows) {
 		printf("%s: ERROR Could not load data from file '%s'\n", 
 			argv[0], DATA_IN);

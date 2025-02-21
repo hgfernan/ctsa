@@ -1,1 +1,1 @@
-../../../test/auxlib.c
+../auxlib.c

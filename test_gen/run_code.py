@@ -17,7 +17,7 @@ import subprocess # class CalledProcessError, run()
 from types  import SimpleNamespace
 from typing import List
 
-def get_executable_root() -> str:
+def get_executable_folder(library : str) -> str:
     """
     Return the executable path
 
@@ -28,7 +28,7 @@ def get_executable_root() -> str:
 
     """
     # TODO how to recover the compilation model (debug, release, etc.)
-    return '../Bin/DEBUG/'
+    return '../Bin/DEBUG/' + library.lower()
 
 def get_out_prefix(library : str, model : str) -> str :
     """
@@ -47,7 +47,7 @@ def get_out_prefix(library : str, model : str) -> str :
         A base path where the output folders will be placed.
 
     """
-    return get_executable_root() + '/' + library.lower() + '/' + model.lower()
+    return get_executable_folder(library) + '/' + model.lower()
 
 def bld_range(first : int, last : int = None) -> range:
     """
@@ -175,7 +175,7 @@ def bld_code_name(library : str,model : str,
 
     """
 
-    result : str = model.lower() + '_' + library.lower() + '_'
+    result : str = library.lower() + '_' + model.lower() + '_'
     result += f'p{param_id:04d}_d{data_id:04d}'
 
     # normal function termination
@@ -241,9 +241,50 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
 
 
 # TODO get executable id from database
-# TODO save json result in the database 
+# TODO save json result in the database
 # TODO generate log and error msgs for this executin
 # TODO save execution results in the database
+
+def save_output(exec_id : int, out_prefix : str, o_type : str, o_buf : bytes) \
+    -> bool:
+    """
+    Save program output with proper name in the proper folder
+
+    Parameters
+    ----------
+    exec_id : int
+        Id of the execution.
+    out_prefix : str
+        Prefix path of the output folder.
+    o_type : str
+        Output type as a string. Valid values are "log" and "err".
+        To be replaced as an enum
+    o_buf : bytes
+        Contents of the output as a byte array.
+
+    Returns
+    -------
+    bool
+        True if saving was fine, False otherwise.
+        To be replaced as an enum
+
+    """
+    if o_type not in ['err', 'log']:
+        return False
+
+    out_str : str = o_buf.decode(encoding='utf-8')
+    if len(out_str) > 0:
+        out_pre : str = out_prefix + '/exec_' + o_type + 's' + '/'
+        out_ext : str = '.' + o_type
+        out_name : str = out_pre + f'{exec_id:04d}' + out_ext
+        with open(out_name, 'w', encoding='utf-8') as out_f:
+            out_f.write(out_str)
+
+        # TODO handle exception
+
+    # Normal function termination
+    return True
+
 
 def main(argv : List[str]) -> int:
     """
@@ -287,36 +328,58 @@ def main(argv : List[str]) -> int:
                 bld_code_name(params.library, params.model, param_id, data_id)
             print(code_name)
 
-            executable_name = \
-                bld_executable_path(params.library, code_name)
+            executable_name = './' + code_name
 
             try:
                 # TODO get the exec_id from the database
                 print([executable_name, str(exec_id)])
                 proc = subprocess.run([executable_name, str(exec_id)],
-                                    cwd=get_executable_root(),
+                # proc = subprocess.run(['ls', '-l'],
+                                    cwd=get_executable_folder(params.library),
                                     stdout=subprocess.PIPE,
                                     stderr=subprocess.PIPE,
                                     check=True
                                    )
 
-                err_str : str = proc.stderr.decode(encoding='utf-8')
-                if len(err_str) > 0:
-                    err_name : str = \
-                        get_out_prefix(params.library, params.model)
-                    err_name += f'/exec_errs/{exec_id:04d}.err'
-                    with open(err_name, 'w', encoding='utf-8') as err_f:
-                        err_f.write(err_str)
+                rv : bool = True
+                rv = save_output(exec_id,
+                                 get_out_prefix(params.library, params.model),
+                                 'log',
+                                 proc.stdout)
+                # TODO handle save_output() failure
 
-                log_str : str = proc.stdout.decode(encoding='utf-8')
-                log_name : str = get_out_prefix(params.library, params.model)
-                log_name += f'/exec_logs/{exec_id:04d}.log'
-                with open(log_name, 'w', encoding='utf-8') as log_f:
-                    log_f.write(log_str)
+                rv = save_output(exec_id,
+                                 get_out_prefix(params.library, params.model),
+                                 'err',
+                                 proc.stderr)
+                # TODO handle save_output() failure
+
+                # err_str : str = proc.stderr.decode(encoding='utf-8')
+                # if len(err_str) > 0:
+                #     err_name : str = \
+                #         get_out_prefix(params.library, params.model)
+                #     err_name += f'/exec_errs/{exec_id:04d}.err'
+                #     with open(err_name, 'w', encoding='utf-8') as err_f:
+                #         err_f.write(err_str)
+
+                # log_str : str = proc.stdout.decode(encoding='utf-8')
+                # log_name : str = get_out_prefix(params.library, params.model)
+                # log_name += f'/exec_logs/{exec_id:04d}.log'
+                # with open(log_name, 'w', encoding='utf-8') as log_f:
+                #     log_f.write(log_str)
 
             except FileNotFoundError as exc:
                 print(f'{type(exc).__name__}: {str(exc)}')
-                print(dir(exc))
+                print(f'{get_executable_folder(params.library)}')
+                
+
+                rv : bool = True
+                rv = save_output(exec_id,
+                                 get_out_prefix(params.library, params.model),
+                                 'err',
+                                 f'{type(exc).__name__}: {str(exc)}'
+                                )
+                # TODO handle save_output() failure
 
                 # print(f'exc.returncode {exc.returncode}')
                 # print(exc.output)
@@ -331,8 +394,9 @@ def main(argv : List[str]) -> int:
                 print(exc.__dict__)
 
                 print(exc.stdout)
-                print(signal.Signals(-exc.returncode).name)
-            
+                if exc.returncode < 0:
+                    print(signal.Signals(-exc.returncode).name)
+
             finally:
                 exec_id += 1
 
