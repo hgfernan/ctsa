@@ -121,7 +121,7 @@ def parse_cli(argv : List[str]) -> argparse.Namespace:
                        )
 
     help_str = 'Statistical model to be used'
-    choices : List[str] = ['AR', 'ARIMA', 'SARIMA', 'SARIMAX']
+    choices : List[str] = ['AR', 'ARMA', 'ARIMA', 'SARIMA', 'SARIMAX']
     parser.add_argument('-m', '--model', choices=choices,
                         required=True, help=help_str
                        )
@@ -287,7 +287,15 @@ def save_output(exec_id : int, out_prefix : str, o_type : str, o_buf : bytes) \
     # Normal function termination
     return True
 
-def get_next_exec() -> Tuple[int, ]:
+def get_next_exec() -> Tuple[int, sqlite3.Cursor]:
+    # TODO handle exceptions
+    con : sqlite3.Connection = sqlite3.connect('test_params.db')
+    cursor : sqlite3.Cursor = con.cursor()
+    query : str = 'SELECT MAX(exec_id) FROM execs;'
+    
+    rv = cursor.execute(query).fetchall()
+    
+    
     
 def main(argv : List[str]) -> int:
     """
