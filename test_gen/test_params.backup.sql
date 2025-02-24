@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS "argumentlims" (
 	"created_min"	TEXT NOT NULL,
 	"created_max"	TEXT NOT NULL,
 	"model_id"	INTEGER NOT NULL,
-	FOREIGN KEY("model_id") REFERENCES "models"("model_id"),
-	PRIMARY KEY("argumentlim_id" AUTOINCREMENT)
+	PRIMARY KEY("argumentlim_id" AUTOINCREMENT),
+	FOREIGN KEY("model_id") REFERENCES "models"("model_id")
 );
 DROP TABLE IF EXISTS "codes";
 CREATE TABLE IF NOT EXISTS "codes" (
@@ -28,10 +28,10 @@ CREATE TABLE IF NOT EXISTS "codes" (
 	"datafile_id"	INTEGER NOT NULL,
 	"param_id"	INTEGER NOT NULL,
 	"template_id"	INTEGER NOT NULL,
-	FOREIGN KEY("template_id") REFERENCES "templates"("template_id"),
-	FOREIGN KEY("datafile_id") REFERENCES "datafiles"("datafile_id"),
 	FOREIGN KEY("param_id") REFERENCES "params"("param_id"),
-	PRIMARY KEY("code_id" AUTOINCREMENT)
+	FOREIGN KEY("template_id") REFERENCES "templates"("template_id"),
+	PRIMARY KEY("code_id" AUTOINCREMENT),
+	FOREIGN KEY("datafile_id") REFERENCES "datafiles"("datafile_id")
 );
 DROP TABLE IF EXISTS "execs";
 CREATE TABLE IF NOT EXISTS "execs" (
@@ -43,8 +43,8 @@ CREATE TABLE IF NOT EXISTS "execs" (
 	"elapsed_time"	NUMERIC NOT NULL,
 	"process_time"	NUMERIC NOT NULL,
 	"value"	TEXT NOT NULL,
-	FOREIGN KEY("code_id") REFERENCES "codes"("code_id"),
-	PRIMARY KEY("exec_id" AUTOINCREMENT)
+	PRIMARY KEY("exec_id" AUTOINCREMENT),
+	FOREIGN KEY("code_id") REFERENCES "codes"("code_id")
 );
 DROP TABLE IF EXISTS "tests";
 CREATE TABLE IF NOT EXISTS "tests" (
@@ -54,8 +54,8 @@ CREATE TABLE IF NOT EXISTS "tests" (
 	"right_exec_id"	INTEGER NOT NULL,
 	"tolerance"	NUMERIC NOT NULL,
 	"value"	TEXT NOT NULL,
-	FOREIGN KEY("right_exec_id") REFERENCES "execs"("exec_id"),
 	FOREIGN KEY("left_exec_id") REFERENCES "execs"("exec_id"),
+	FOREIGN KEY("right_exec_id") REFERENCES "execs"("exec_id"),
 	PRIMARY KEY("test_id" AUTOINCREMENT)
 );
 DROP TABLE IF EXISTS "models";
@@ -81,8 +81,8 @@ CREATE TABLE IF NOT EXISTS "capabilities" (
 	"model_id"	INTEGER NOT NULL,
 	"library_id"	INTEGER NOT NULL,
 	PRIMARY KEY("capability_id" AUTOINCREMENT),
-	FOREIGN KEY("library_id") REFERENCES "libraries"("library_id"),
-	FOREIGN KEY("model_id") REFERENCES "models"("model_id")
+	FOREIGN KEY("model_id") REFERENCES "models"("model_id"),
+	FOREIGN KEY("library_id") REFERENCES "libraries"("library_id")
 );
 DROP TABLE IF EXISTS "arguments";
 CREATE TABLE IF NOT EXISTS "arguments" (
@@ -113,10 +113,10 @@ CREATE TABLE IF NOT EXISTS "params" (
 	"argument_id"	INTEGER NOT NULL,
 	"capability_id"	INTEGER NOT NULL,
 	"template_id"	INTEGER NOT NULL,
-	FOREIGN KEY("argument_id") REFERENCES "arguments"("argument_id"),
-	FOREIGN KEY("template_id") REFERENCES "templates"("template_id"),
 	FOREIGN KEY("capability_id") REFERENCES "capabilities"("capability_id"),
-	PRIMARY KEY("param_id" AUTOINCREMENT)
+	FOREIGN KEY("template_id") REFERENCES "templates"("template_id"),
+	PRIMARY KEY("param_id" AUTOINCREMENT),
+	FOREIGN KEY("argument_id") REFERENCES "arguments"("argument_id")
 );
 INSERT INTO "models" ("model_id","timestamp","name","description") VALUES (1,'2025-02-24 15:37:02','AR','Autoregressive model'),
  (2,'2025-02-24 15:38:19','ARIMA','Autoregressive integrated moving average model'),
