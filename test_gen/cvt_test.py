@@ -111,36 +111,39 @@ def main(argv : List[str]) -> int:
                             parse_dates=parse_dates,
                             index_col=index_col,
                             skiprows=row['Skip'],
-                            delim_whitespace=True,
+                            sep='\s+',
                             lineterminator=terminator)
         else:
             original : pd.DataFrame = \
                 pd.read_csv(row['Original'],
                             header=header,
                             quoting=csv.QUOTE_NONNUMERIC,
+                            index_col=index_col,
                             parse_dates=parse_dates,
                             skiprows=row['Skip'],
                             lineterminator=terminator)
 
         print(index, row)
 
-        value_ind = row['Selected'] - 1
 
         # HINT if file has index, select column 0 as index
         if row['Index'] != 0:
-            original.reset_index()
+            original = original.reset_index()
             index = original.iloc[:, row['Index'] - 1]
+            value_ind = row['Selected']
         else:
             index = list( range(len(original)) )
-            # [ind for ind in range(len(original))]
+            value_ind = row['Selected'] - 1
 
+        # print(f'value_ind {value_ind}')
+        # print(original.head())
         value = original.iloc[:, value_ind]
 
         # HINT create a data frame with 'index' and 'value'
         file_df = pd.DataFrame({'index': index, 'value' : value})
 
         # HINT save file as <file number>.csv
-        file_df_name : str = f'{file_no:04d}.csv'
+        file_df_name : str = f'../testdata/{file_no:04d}.csv'
         file_df.to_csv(file_df_name, index=False)
 
         # HINT create a database entry with the information obtained
