@@ -15,8 +15,6 @@ from typing import Any, Dict, List, Tuple
 
 import pandas as pd
 
-    # TODO create a database entry with the information obtained
-
 def main(argv : List[str]) -> int:
     """
     Main program
@@ -86,21 +84,21 @@ def main(argv : List[str]) -> int:
     # HINT for each line of file db
     value_ind : int = -1
     for index, row in file_db.iterrows():
-        # HINT chose a terminator 
+        # HINT chose a terminator
         terminator : str = terminator_dict[row['Terminator']]
 
         header : int = None
         if row['Header'] == 1:
             header = 0
-            
+
         index_col = False
         if row['Index'] != 0:
             index_col = row['Index'] - 1
-            
+
         parse_dates = False
         if row['Date indx'] != 0:
             parse_dates = True
-        
+
         # HINT get data file, skipping rows
         if row['Separator'] == ' ':
             # HINT handle file with blank space separators
@@ -111,7 +109,7 @@ def main(argv : List[str]) -> int:
                             parse_dates=parse_dates,
                             index_col=index_col,
                             skiprows=row['Skip'],
-                            sep='\s+',
+                            sep='\\s+',
                             lineterminator=terminator)
         else:
             original : pd.DataFrame = \
@@ -152,17 +150,17 @@ def main(argv : List[str]) -> int:
 
         param_tuple = (row['Original'], len(file_df), file_df_name)
         rv = cur.execute(query, param_tuple)
-        
-        # HINT commit the changes 
+
+        # HINT commit the changes
         conn.commit()
-        
+
         # HINT Go next file
         file_no += 1
 
-    # TODO close the test params database
+    # HINT close the test params database
     cur.close()
     conn.close()
-    
+
     # Normal function termination
     return 0
 
