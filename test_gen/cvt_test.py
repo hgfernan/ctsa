@@ -80,6 +80,8 @@ def main(argv : List[str]) -> int:
     file_no : int = 1
     if (len(rv) >= 1) and (rv[0][0] is not None):
         file_no = rv[0][0] + 1
+    
+    # TODO what if len(rv) < 1 ?
 
     # HINT for each line of file db
     value_ind : int = -1

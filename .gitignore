@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 #Folders Ignore
 .spyproject/
+__pycache__/
 .spyder/
 .geany/
 Bin/

@@ -348,6 +348,12 @@ params [label=<
             
 
                 <TR>
+                    <TD PORT="description_to">&nbsp;</TD>
+                    <TD PORT="description_from">description</TD>
+                </TR>
+            
+
+                <TR>
                     <TD PORT="value_to">&nbsp;</TD>
                     <TD PORT="value_from">value</TD>
                 </TR>
