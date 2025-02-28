@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS "argumentlims" (
 	"created_min"	TEXT NOT NULL,
 	"created_max"	TEXT NOT NULL,
 	"model_id"	INTEGER NOT NULL,
-	FOREIGN KEY("model_id") REFERENCES "models"("model_id"),
-	PRIMARY KEY("argumentlim_id" AUTOINCREMENT)
+	PRIMARY KEY("argumentlim_id" AUTOINCREMENT),
+	FOREIGN KEY("model_id") REFERENCES "models"("model_id")
 );
 DROP TABLE IF EXISTS "codes";
 CREATE TABLE IF NOT EXISTS "codes" (
@@ -28,10 +28,10 @@ CREATE TABLE IF NOT EXISTS "codes" (
 	"datafile_id"	INTEGER NOT NULL,
 	"param_id"	INTEGER NOT NULL,
 	"template_id"	INTEGER NOT NULL,
-	PRIMARY KEY("code_id" AUTOINCREMENT),
-	FOREIGN KEY("datafile_id") REFERENCES "datafiles"("datafile_id"),
 	FOREIGN KEY("template_id") REFERENCES "templates"("template_id"),
-	FOREIGN KEY("param_id") REFERENCES "params"("param_id")
+	FOREIGN KEY("param_id") REFERENCES "params"("param_id"),
+	FOREIGN KEY("datafile_id") REFERENCES "datafiles"("datafile_id"),
+	PRIMARY KEY("code_id" AUTOINCREMENT)
 );
 DROP TABLE IF EXISTS "execs";
 CREATE TABLE IF NOT EXISTS "execs" (
@@ -43,8 +43,8 @@ CREATE TABLE IF NOT EXISTS "execs" (
 	"elapsed_time"	NUMERIC NOT NULL,
 	"process_time"	NUMERIC NOT NULL,
 	"value"	TEXT NOT NULL,
-	PRIMARY KEY("exec_id" AUTOINCREMENT),
-	FOREIGN KEY("code_id") REFERENCES "codes"("code_id")
+	FOREIGN KEY("code_id") REFERENCES "codes"("code_id"),
+	PRIMARY KEY("exec_id" AUTOINCREMENT)
 );
 DROP TABLE IF EXISTS "tests";
 CREATE TABLE IF NOT EXISTS "tests" (
@@ -80,9 +80,9 @@ CREATE TABLE IF NOT EXISTS "capabilities" (
 	"timestamp"	TEXT NOT NULL DEFAULT (datetime()),
 	"model_id"	INTEGER NOT NULL,
 	"library_id"	INTEGER NOT NULL,
-	FOREIGN KEY("library_id") REFERENCES "libraries"("library_id"),
+	PRIMARY KEY("capability_id" AUTOINCREMENT),
 	FOREIGN KEY("model_id") REFERENCES "models"("model_id"),
-	PRIMARY KEY("capability_id" AUTOINCREMENT)
+	FOREIGN KEY("library_id") REFERENCES "libraries"("library_id")
 );
 DROP TABLE IF EXISTS "arguments";
 CREATE TABLE IF NOT EXISTS "arguments" (
@@ -91,8 +91,8 @@ CREATE TABLE IF NOT EXISTS "arguments" (
 	"description"	TEXT NOT NULL,
 	"model_id"	INTEGER NOT NULL,
 	"value"	TEXT NOT NULL,
-	PRIMARY KEY("argument_id" AUTOINCREMENT),
-	FOREIGN KEY("model_id") REFERENCES "models"("model_id")
+	FOREIGN KEY("model_id") REFERENCES "models"("model_id"),
+	PRIMARY KEY("argument_id" AUTOINCREMENT)
 );
 DROP TABLE IF EXISTS "templates";
 CREATE TABLE IF NOT EXISTS "templates" (
@@ -156,6 +156,6 @@ INSERT INTO "libraries" ("library_id","timestamp","name","version") VALUES (1,'2
  (4,'2025-02-24 16:07:37','statsmodels','0.14.4');
 INSERT INTO "capabilities" ("capability_id","timestamp","model_id","library_id") VALUES (1,'2025-02-24 16:31:21',1,1);
 INSERT INTO "arguments" ("argument_id","timestamp","description","model_id","value") VALUES (1,'2025-02-24 17:22:45','argument_ar_0001.json',1,'{ "parameters": { "init": { "L": 5, "n_rows": 10, "method": 0 } } }');
-INSERT INTO "templates" ("template_id","timestamp","description","text","capability_id") VALUES (1,'2025-02-24 16:54:43','ctsa_ar_templ1.c','TO BE DEFINED',1);
+INSERT INTO "templates" ("template_id","timestamp","description","text","capability_id") VALUES (1,'2025-02-24 16:54:43','ctsa_ar_templ01.c.dh','TO BE DEFINED',1);
 INSERT INTO "params" ("param_id","timestamp","description","value","argument_id","capability_id","template_id") VALUES (1,'2025-02-24 18:26:26','param_ar_0001.json','{ "parameters": { "init": { "L": 5, "n_rows": 10, "method": 0 } } }',1,1,1);
 COMMIT;
