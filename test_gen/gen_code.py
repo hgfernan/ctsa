@@ -7,8 +7,6 @@ Created on Mon Feb 24 19:51:18 2025
 @author: hilton
 """
 
-# TODO parse command line to get model, library, template, range of params and data
-# TODO retrieve data from the database
 # TODO for the number of data, template and parameters, generate code
 
 import sys      # argv, exit()
@@ -20,6 +18,47 @@ from typing import List, Tuple
 from types  import SimpleNamespace
 
 # from dh_subs import DoubleHashSubs, NoneType, ItemType
+
+def bld_range(first : int, last : int = None) -> range:
+    """
+    Return a closed interval interval range from the left and right limits,
+    inclusive. Handle the case when the right limit is None.
+
+    Parameters
+    ----------
+    first : int
+        The left limit of the closed interval.
+    last : int, optional
+        The right limit of the closed interval. The default is None, when
+        the interval is only the first .
+
+    Raises
+    ------
+    ValueError
+        DESCRIPTION.
+
+    Returns
+    -------
+    range
+        A closed interval of the limits, as a standard Python `range` object.
+
+    """
+    if first is None:
+        msg : str = 'The first parameter must be an integer, not `None`'
+        raise ValueError(msg)
+
+    _last : int = last
+    if _last is None:
+        _last = first
+
+    _first = min(first, _last)
+    _last = max(first, _last)
+
+    result : range = range(_first, _last + 1)
+
+    # Normal function termination
+    return result
+
 
 def parse_cli(argv : List[str]) -> argparse.Namespace:
     """
@@ -116,11 +155,10 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
 
         # Return to indicate failure
         return None
-    
+
     # HINT get library id
     result.library = args.library
-    print(result) ; sys.stdout.flush()
-    
+
     qry : str = """
         SELECT library_id FROM libraries
             WHERE name = ?
@@ -179,10 +217,10 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
 
         # Return to indicate failure
         return None
-    
+
     result.template_ord = args.template
     if len(rv) < result.template_ord:
-        print(f'{sys.argv[0]}: ERROR Ordinal {result.template_ord} ' + 
+        print(f'{sys.argv[0]}: ERROR Ordinal {result.template_ord} ' +
               'is too large. Only {len(rv)} are available')
 
         # Return to indicate failure
@@ -191,27 +229,27 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
     ind : int = result.template_ord - 1
     result.template_id = rv[ind][0]
     result.templ_desc = rv[ind][1]
-     
-    # Normal function termination
-    return result
+
+    # print(type(result.template_id))
+    # print(result)
 
     # HINT getting parameter list
     qry = """
-        SELECT param_id, description, value FROM params
-            WHERE template_id = ?
-        ORDERED BY param_id;
+        SELECT param_id, [description], value FROM params
+            WHERE template_id = (?)
+        ORDER BY param_id
     """
-    rv = result.cur.execute(qry, result.template_id).fetchall()
+    rv = result.cur.execute(qry, (result.template_id,)).fetchall()
     if (rv is None) or (not isinstance(rv, (list, tuple))) or (len(rv) == 0):
         print(f'{sys.argv[0]}: ERROR Unexpected error in template query. ' +
               f'It returned {rv}')
 
         # Return to indicate failure
         return None
-    
+
     result.param_ord = args.parameter
     if len(rv) < result.param_ord:
-        print(f'{sys.argv[0]}: ERROR Ordinal {result.param_ord} ' + 
+        print(f'{sys.argv[0]}: ERROR Ordinal {result.param_ord} ' +
               'is too large. Only {len(rv)} are available')
 
         # Return to indicate failure
@@ -221,6 +259,12 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
     result.param_id = rv[ind][0]
     result.param_desc = rv[ind][1]
     result.param_value = rv[ind][2]
+
+    result.data_first, result.data_last = \
+        args.data_first, args.data_last
+
+    result.datafile_range : range = \
+        bld_range(result.data_first, result.data_last)
 
     # Normal function termination
     return result
@@ -241,22 +285,24 @@ def main(argv : List[str]) -> int:
 
     """
     args : argparse.Namespace = parse_cli(argv)
-    print(args)
-    
-    if args is None: 
+    print(f'args\n\t{args}')
+
+    if args is None:
         print(f'{argv[0]}: ERROR Could not parse the comand line')
-        
+
         # Return to indicate failure
         return 1
-    
+
     params : SimpleNamespace = interpret_args(args)
-    print(params)
-    
-    if params is None: 
+    print(f'params\n\t{params}')
+
+    if params is None:
         print(f'{argv[0]}: ERROR Could not interpret the program parameters')
-        
+
         # Return to indicate failure
         return 2
+    
+    # TODO loop over the given data files to create the code files    
 
     # Normal function termination
     return 0
