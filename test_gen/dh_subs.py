@@ -37,7 +37,7 @@ class DoubleHashSubs:
         line : str
             The double hash string to be parsed and eventually filled in.
         dbl_quote : bool, optional
-            Should strings be delimited with double quotes, aka ". 
+            Should strings be delimited with double quotes, aka ".
             The default is True.
 
         Returns
@@ -84,7 +84,7 @@ class DoubleHashSubs:
 
     def get_blanks(self) -> List[ItemType]:
         """
-        Return the list of all blank items, filled in or not, in the 
+        Return the list of all blank items, filled in or not, in the
         item list
 
         Returns
@@ -102,7 +102,7 @@ class DoubleHashSubs:
 
     def get_blank(self, ind : int) -> ItemType:
         """
-        Return the item of the ind-th blank in the item list, or None if the 
+        Return the item of the ind-th blank in the item list, or None if the
         index is invalid
 
         Parameters
@@ -191,7 +191,7 @@ class DoubleHashSubs:
         abs_ind = self.blanks[ind]
         result : Union[float, str] = self.items[abs_ind]
 
-        if isinstance(elmt, str):
+        if not isinstance(elmt, str):
             self.items[abs_ind] = elmt
 
             # Normal function termination
@@ -315,7 +315,8 @@ def main(argv : List[str]) -> int:
     """
     print(f'{argv[0]} Testing class DoubleHashSubs...\n')
 
-    test_doublehashsubs('aaaa##b##aba', ['122'])
+    test_doublehashsubs('##b##', ['hjelsberg'])
+    test_doublehashsubs('aaaa##b##aba', ['hjelsberg'])
     test_doublehashsubs('aaaa##b##aba##x##', ['122', 'hjelsberg'])
     test_doublehashsubs('aaaa##b##aba##x##', ['122', 'hjelsberg', 'karma'])
 

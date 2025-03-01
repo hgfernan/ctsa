@@ -7,9 +7,9 @@ Created on Mon Feb 24 19:51:18 2025
 @author: hilton
 """
 
-# TODO for the number of data, template and parameters, generate code
-
 import sys      # argv, exit()
+import copy     # deepcopy()
+import json     # loads()
 import sqlite3  # connect(), cursor(), execute()
 # import os.path  # exists()
 import argparse # class ArgumentParser, class Namespace
@@ -57,6 +57,36 @@ def bld_range(first : int, last : int = None) -> range:
     result : range = range(_first, _last + 1)
 
     # Normal function termination
+    return result
+
+
+def bld_code_name(library : str,model : str,
+                  param_id : int, data_id : int) -> str:
+    """
+    Build the code name from library, statistical model, parameter and data.
+
+    Parameters
+    ----------
+    library : str
+        The library the code is build upon.
+    model : str
+        The statistical model implemented by the code.
+    param_id : int
+        The identification of the program parameters as a number.
+    data_id : int
+        The identification of the data file as a number.
+
+    Returns
+    -------
+    str
+        The full name of the code.
+
+    """
+
+    result : str = library.lower() + '_' + model.lower() + '_'
+    result += f'p{param_id:04d}_d{data_id:04d}'
+
+    # normal function termination
     return result
 
 
@@ -258,7 +288,7 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
     ind : int = result.param_ord - 1
     result.param_id = rv[ind][0]
     result.param_desc = rv[ind][1]
-    result.param_value = rv[ind][2]
+    result.param_value = json.loads(rv[ind][2])
 
     result.data_first, result.data_last = \
         args.data_first, args.data_last
@@ -301,8 +331,58 @@ def main(argv : List[str]) -> int:
 
         # Return to indicate failure
         return 2
+
+    # TODO read all lines of template file
+    template_name : str = 'templates/' + params.library + '/' + \
+        params.library + '_' + params.model.lower() + \
+            f'_dh{params.template_id:04d}.c'
+        
+    template_lines : List[str] = []
+    print(template_name)
+    try:
+        with open(template_name, 'r') as template_file:
+            template_lines = template_file.readlines()
+            
+    except FileNotFoundError as exc:
+        print(f'{type(exc).__name__}: {str(exc)}')
+        
+        # Return to indicate failure
+        return 3 
+            
+    except IOError as exc:
+        print(f'{type(exc).__name__}: {str(exc)}')
+        
+        # Return to indicate failure
+        return 4 
     
-    # TODO loop over the given data files to create the code files    
+    # print(template_lines)
+    
+    # HINT loop over the given data files to create the code files
+    # for datafile_id in params.datafile_range:
+    for datafile_id in range(1, 5):
+        code_name = \
+            bld_code_name(params.library, params.model,
+                          params.param_id, datafile_id)
+
+        print(f'{datafile_id:4d} {code_name}')
+        datafile = f'{datafile_id:04d}'
+        blank_dict = params.param_value['parameters']['init']
+        blank_dict['datafile'] = datafile
+        print(blank_dict)
+            
+        
+
+        # TODO generate the test code, thru the double hash annotation template
+        # /home/hilton/github/ctsa/test_gen/templates/ctsa/ctsa_ar_dh0001.c
+        # try:
+        #    with open()
+        
+        
+
+        # TODO write the generated code in the right directory
+        # /home/hilton/github/ctsa/test/ctsa
+
+        # TODO update the database with the code generated
 
     # Normal function termination
     return 0
