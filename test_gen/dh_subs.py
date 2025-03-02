@@ -315,6 +315,7 @@ def main(argv : List[str]) -> int:
     """
     print(f'{argv[0]} Testing class DoubleHashSubs...\n')
 
+    test_doublehashsubs('##b', ['hjelsberg'])
     test_doublehashsubs('##b##', ['hjelsberg'])
     test_doublehashsubs('aaaa##b##aba', ['hjelsberg'])
     test_doublehashsubs('aaaa##b##aba##x##', ['122', 'hjelsberg'])
