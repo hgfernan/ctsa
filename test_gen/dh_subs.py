@@ -191,8 +191,11 @@ class DoubleHashSubs:
         abs_ind = self.blanks[ind]
         result : Union[float, str] = self.items[abs_ind]
 
+        # TODO define better the type conversions
+        
         if not isinstance(elmt, str):
-            self.items[abs_ind] = elmt
+            # self.items[abs_ind] = elmt
+            self.items[abs_ind] = str(elmt)
 
             # Normal function termination
             return result
@@ -201,9 +204,8 @@ class DoubleHashSubs:
         if rv:
             span : List[int] = rv.span()
             frag : str = elmt[span[0] : span[1]]
-            # print(self.blanks)
-            # print(self.blanks, ind, int(frag))
-            self.items[abs_ind] = int(frag)
+            # self.items[abs_ind] = int(frag)
+            self.items[abs_ind] = frag
 
             # Normal function termination
             return result
@@ -215,7 +217,8 @@ class DoubleHashSubs:
         if rv:
             span = rv.span()
             frag : str = elmt[span[0] : span[1]]
-            self.items[abs_ind] = float(frag)
+            # self.items[abs_ind] = float(frag)
+            self.items[abs_ind] = frag
 
             # Normal function termination
             return result

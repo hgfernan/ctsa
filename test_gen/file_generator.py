@@ -149,7 +149,7 @@ class FileGenerator:
 
         # HINT restore the original lines
         for ind, value in enumerate(self.to_fill):
-            print(ind, value)
+            # print(ind, value)
             self.lines[value] = self.fill_bkp[value]
 
         # HINT revert object to original state

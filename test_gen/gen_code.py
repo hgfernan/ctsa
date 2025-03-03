@@ -8,7 +8,7 @@ Created on Mon Feb 24 19:51:18 2025
 """
 
 import sys      # argv, exit()
-import copy     # deepcopy()
+# import copy     # deepcopy()
 import json     # loads()
 import sqlite3  # connect(), cursor(), execute()
 # import os.path  # exists()
@@ -18,6 +18,22 @@ from typing import List, Tuple
 from types  import SimpleNamespace
 
 # from dh_subs import DoubleHashSubs, NoneType, ItemType
+from file_generator import FileGenerator
+
+
+def get_source_folder(library : str) -> str:
+    """
+    Return the repo-based path to the source folder
+
+    Returns
+    -------
+    str
+        The source code path.
+
+    """
+    # TODO how to recover the compilation model (debug, release, etc.)
+    return '../test/' + library.lower()
+
 
 def bld_range(first : int, last : int = None) -> range:
     """
@@ -89,6 +105,44 @@ def bld_code_name(library : str,model : str,
     # normal function termination
     return result
 
+
+def bld_source_path(library : str, code_name : str) -> str:
+    """
+    Build the executable path from library and code name
+
+    Parameters
+    ----------
+    library : str
+        The library the code is built upon.
+    code_name : str
+        The name of the code.
+
+    Returns
+    -------
+    str
+        Library path plus code name.
+
+    """
+    # TODO in the future, create an OOP solution
+    match library.lower():
+        case 'ctsa':
+             ext = '.c'
+        case 'forecast':
+             ext = '.R'
+        case 'pmdarima':
+             ext = '.py'
+        case 'pmdarima':
+             ext = '.py'
+        case 'statsmodels':
+             ext = '.py'
+        case _:
+            msg : str = f'INTERNAL ERROR Unknown library \'{library}\''
+            raise ValueError(msg)
+    
+    result : str = get_source_folder(library) + '/' + code_name + ext
+
+    # Normal function termination
+    return result
 
 def parse_cli(argv : List[str]) -> argparse.Namespace:
     """
@@ -356,31 +410,37 @@ def main(argv : List[str]) -> int:
         return 4 
     
     # print(template_lines)
+        
+    generator : FileGenerator = FileGenerator(template_name)
     
     # HINT loop over the given data files to create the code files
-    # for datafile_id in params.datafile_range:
-    for datafile_id in range(1, 5):
+    for datafile_id in params.datafile_range:
         code_name = \
             bld_code_name(params.library, params.model,
                           params.param_id, datafile_id)
 
         print(f'{datafile_id:4d} {code_name}')
-        datafile = f'{datafile_id:04d}'
-        blank_dict = params.param_value['parameters']['init']
-        blank_dict['datafile'] = datafile
-        print(blank_dict)
-            
+        source_path = bld_source_path(params.library, code_name)
         
-
+        datafile_id = f'{datafile_id:04d}'
+        fill_dict = params.param_value['parameters']['init']
+        fill_dict['datafile_id'] = datafile_id
+        print(fill_dict)
+            
         # TODO generate the test code, thru the double hash annotation template
         # /home/hilton/github/ctsa/test_gen/templates/ctsa/ctsa_ar_dh0001.c
         # try:
         #    with open()
         
-        
+        n_lines = generator.fill_in(fill_dict)
+    
+        print(f'Lines filled: {n_lines}')
 
         # TODO write the generated code in the right directory
         # /home/hilton/github/ctsa/test/ctsa
+        rv = generator.save_to_file(source_path)
+    
+        print(f'Saving done {rv}')
 
         # TODO update the database with the code generated
 
