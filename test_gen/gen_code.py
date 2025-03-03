@@ -126,19 +126,19 @@ def bld_source_path(library : str, code_name : str) -> str:
     # TODO in the future, create an OOP solution
     match library.lower():
         case 'ctsa':
-             ext = '.c'
+            ext = '.c'
         case 'forecast':
-             ext = '.R'
+            ext = '.R'
         case 'pmdarima':
-             ext = '.py'
+            ext = '.py'
         case 'pmdarima':
-             ext = '.py'
+            ext = '.py'
         case 'statsmodels':
-             ext = '.py'
+            ext = '.py'
         case _:
             msg : str = f'INTERNAL ERROR Unknown library \'{library}\''
             raise ValueError(msg)
-    
+
     result : str = get_source_folder(library) + '/' + code_name + ext
 
     # Normal function termination
@@ -386,33 +386,12 @@ def main(argv : List[str]) -> int:
         # Return to indicate failure
         return 2
 
-    # TODO read all lines of template file
     template_name : str = 'templates/' + params.library + '/' + \
         params.library + '_' + params.model.lower() + \
             f'_dh{params.template_id:04d}.c'
-        
-    template_lines : List[str] = []
-    print(template_name)
-    try:
-        with open(template_name, 'r') as template_file:
-            template_lines = template_file.readlines()
-            
-    except FileNotFoundError as exc:
-        print(f'{type(exc).__name__}: {str(exc)}')
-        
-        # Return to indicate failure
-        return 3 
-            
-    except IOError as exc:
-        print(f'{type(exc).__name__}: {str(exc)}')
-        
-        # Return to indicate failure
-        return 4 
-    
-    # print(template_lines)
-        
+
     generator : FileGenerator = FileGenerator(template_name)
-    
+
     # HINT loop over the given data files to create the code files
     for datafile_id in params.datafile_range:
         code_name = \
@@ -421,25 +400,20 @@ def main(argv : List[str]) -> int:
 
         print(f'{datafile_id:4d} {code_name}')
         source_path = bld_source_path(params.library, code_name)
-        
+
         datafile_id = f'{datafile_id:04d}'
         fill_dict = params.param_value['parameters']['init']
         fill_dict['datafile_id'] = datafile_id
         print(fill_dict)
-            
-        # TODO generate the test code, thru the double hash annotation template
-        # /home/hilton/github/ctsa/test_gen/templates/ctsa/ctsa_ar_dh0001.c
-        # try:
-        #    with open()
-        
+
+        # HINT generate the test code, thru the double hash annotation template
         n_lines = generator.fill_in(fill_dict)
-    
+
         print(f'Lines filled: {n_lines}')
 
-        # TODO write the generated code in the right directory
-        # /home/hilton/github/ctsa/test/ctsa
+        # HINT write the generated code in the right directory
         rv = generator.save_to_file(source_path)
-    
+
         print(f'Saving done {rv}')
 
         # TODO update the database with the code generated

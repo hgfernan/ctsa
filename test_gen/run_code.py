@@ -17,7 +17,6 @@ import subprocess # class CalledProcessError, run()
 from typing import List, Tuple
 
 from types  import SimpleNamespace
-from typing import List
 
 def get_executable_folder(library : str) -> str:
     """
@@ -292,11 +291,11 @@ def get_next_exec() -> Tuple[int, sqlite3.Cursor]:
     con : sqlite3.Connection = sqlite3.connect('test_params.db')
     cursor : sqlite3.Cursor = con.cursor()
     query : str = 'SELECT MAX(exec_id) FROM execs;'
-    
+
     rv = cursor.execute(query).fetchall()
-    
-    
-    
+
+
+
 def main(argv : List[str]) -> int:
     """
     Parse command line, execute programs and save their results
@@ -381,10 +380,10 @@ def main(argv : List[str]) -> int:
 
             except FileNotFoundError as exc:
                 print(f'{type(exc).__name__}: {str(exc)}')
-                
+
                 rv : bool = True
-                # msg : str = f'{type(exc).__name__}: {str(exc)}'                
-                msg : str = f'{type(exc).__name__}: {str(exc)}'                
+                # msg : str = f'{type(exc).__name__}: {str(exc)}'
+                msg : str = f'{type(exc).__name__}: {str(exc)}'
                 rv = save_output(exec_id,
                                  get_out_prefix(params.library, params.model),
                                  'err',
@@ -397,7 +396,7 @@ def main(argv : List[str]) -> int:
             except subprocess.CalledProcessError as exc:
                 msg : str = ''
                 msg += f'{type(exc).__name__}: {str(exc)}\n'
-                msg += f'Return code {exc.returncode}\n' 
+                msg += f'Return code {exc.returncode}\n'
                 if exc.returncode < 0:
                     msg += f'Signal: {signal.Signals(-exc.returncode).name})\n'
 
@@ -405,13 +404,13 @@ def main(argv : List[str]) -> int:
                 msg += '\n' + 40*'-' + '\n\n'
                 msg += exc.output.decode(encoding='utf-8') + '\n'
                 print(msg)
-                
+
                 rv : bool = True
                 rv = save_output(exec_id,
                                  get_out_prefix(params.library, params.model),
                                  'err',
                                  msg.encode(encoding='utf-8')
-                                )                
+                                )
 
             finally:
                 exec_id += 1
