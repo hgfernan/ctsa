@@ -14,7 +14,7 @@ import sqlite3  # connect(), cursor(), execute()
 # import os.path  # exists()
 import argparse # class ArgumentParser, class Namespace
 
-from typing import List, Tuple
+from typing import Any, List, Tuple
 from types  import SimpleNamespace
 
 # from dh_subs import DoubleHashSubs, NoneType, ItemType
@@ -144,6 +144,7 @@ def bld_source_path(library : str, code_name : str) -> str:
     # Normal function termination
     return result
 
+
 def parse_cli(argv : List[str]) -> argparse.Namespace:
     """
     Parse command line parameters using module `argparse`
@@ -171,6 +172,14 @@ def parse_cli(argv : List[str]) -> argparse.Namespace:
                         help=help_str
                        )
 
+    def_int : int = 1
+    help_str = 'Library version ordinal from newest to oldest -- 1 is the '
+    help_str += f'current, 2 is the previous. Default: {def_int}'
+    parser.add_argument('-v', '--version_ordinal',
+                        default=def_int,
+                        help=help_str
+                       )
+
     help_str = 'Statistical model to be used'
     choices : List[str] = ['AR', 'ARMA', 'ARIMA', 'SARIMA', 'SARIMAX']
     parser.add_argument('-m', '--model', choices=choices,
@@ -189,7 +198,8 @@ def parse_cli(argv : List[str]) -> argparse.Namespace:
                         required=True, help=help_str
                        )
 
-    help_str = 'First of a range of data identification numbers'
+    help_str = 'First of a range of data identification numbers, starting '
+    help_str += 'with 1'
     parser.add_argument('-D', '--data_first', type=int, required=True,
                         help=help_str
                        )
@@ -204,6 +214,217 @@ def parse_cli(argv : List[str]) -> argparse.Namespace:
 
     # Normal function termination
     return result
+
+
+def version_to_int(version : str) -> int:
+    """
+    Map the usual version triplet 'major.minor.patch' (where to all three
+    numbers are integers) an integer number
+
+    To be used in SQLite `ORDER BY` clauses.
+
+    OBS: Contributed by ChatGPT
+
+    Parameters
+    ----------
+    version : str
+        A triplet 'major.minor.patch'.
+
+    Returns
+    -------
+    int
+        A single integer number mapping the version triplet.
+
+    """
+    # HINT Ensure 3 parts
+    parts = list(map(int, (version.split('.') + ['0', '0'])[:3]))
+    return 1 + 1000 * (parts[1] + 1000 * parts[0]) + parts[2]
+
+
+def open_db(params : SimpleNamespace) -> None:
+    """
+    Open the database, catches exception and raises it again
+
+    Parameters
+    ----------
+    params : SimpleNamespace
+        DESCRIPTION.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    sqlite3.Error
+        Raises again catched exception.
+
+    """
+    try:
+        params.conn = sqlite3.connect(params.test_db_name)
+        params.cur = params.conn.cursor()
+
+    except sqlite3.Error as exc:
+        print(f'{sys.argv[0]}: ERROR {type(exc).__name__}: {str(exc)}')
+
+        if params.conn:
+            params.conn.close()
+
+        # Raise to indicate failure
+        msg : str = f'Could not open the database \'{params.test_db_name}\''
+        raise sqlite3.Error(msg)
+
+
+def fetchone_and_tell(params : SimpleNamespace,
+                      target : str,
+                      query : str,
+                      query_params : Tuple[Any, Any]) -> Tuple[Any]:
+    """
+    Query the database, fetch one row for the answer and raises exception
+    if something was wrong
+
+    Parameters
+    ----------
+    params : SimpleNamespace
+        An object with program parameters.
+    query : str
+        The query to be applied to the database.
+    qry_params : Tuple[Any, Any]
+        The parameters to the query.
+
+    Returns
+    -------
+    Tuple[Any]
+        The answer, as a tuple.
+
+    Raises
+    ------
+    ValueError
+        If the information sought is not found.
+
+    """
+    result = params.cur.execute(query, query_params).fetchone()
+    if result is None:
+        msg : str = f'Query for \'{target}\' returned empty'
+        print(f'{sys.argv[0]}: ERROR {msg}')
+
+        # Raise exception to indicate failure
+        raise ValueError(msg)
+
+    # Normal function termination
+    return result
+
+
+def fetchall_and_tell(params : SimpleNamespace,
+                      target : str,
+                      query : str,
+                      query_params : Tuple[Any, Any],
+                      ordinal : int) -> List[Tuple[Any]]:
+    """
+    Query the database, fetch all row of the answer and raises exception
+    if something was wrong
+
+    Parameters
+    ----------
+    params : SimpleNamespace
+        An object with program parameters.
+    query : str
+        The query to be applied to the database.
+    query_params : Tuple[Any, Any]
+        The parameters to the query.
+    ordinal : int
+        The position of the expected answer in the list
+
+    Returns
+    -------
+    List[Tuple[Any]]
+        The answer, as a list of tuples.
+
+    Raises
+    ------
+    ValueError
+        If the information sought is not found.
+
+    """
+    result = params.cur.execute(query, query_params).fetchall()
+    if (result is None) or (not isinstance(result, (list, tuple))) or \
+        (len(result) == 0):
+        msg : str = f'Query for \'{target}\' returned {result}'
+        print(f'{sys.argv[0]}: ERROR {msg}')
+
+        # Raise exception to indicate failure
+        raise ValueError(msg)
+
+    if len(result) < ordinal:
+        msg : str = 'Ordinal {ordinal} is too large. Only '
+        msg += f'{len(result)} values are available for \'{target}\''
+        print(f'{sys.argv[0]}: ERROR {msg}')
+
+        # Raise exception to indicate failure
+        raise ValueError(msg)
+
+    # Normal function termination
+    return result
+
+
+def set_library_info(params : SimpleNamespace) -> None:
+    """
+    Set the version of a library, given its ordinal number, where
+    1 is the latest version, 2 is the prior version, etc. in the
+    program parameter.
+
+    Set also the unique identifier `library_id` of the pair library
+    and version in the program parameter.
+
+    Parameters
+    ----------
+    params : SimpleNamespace
+        An object containing .
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    ValueError
+        If the information sought is not found.
+
+    """
+    # HINT registers the function in SQLite database
+    params.conn.create_function("version_to_int", 1,
+                                version_to_int,
+                                deterministic=True)
+    query : str = """
+    SELECT library_id, name, version FROM libraries
+        WHERE name = (?)
+        ORDER BY name ASC,
+            version_to_int(version) DESC
+    """
+    target : str = 'library_id'
+    rv : List[Tuple[Any]] = params.cur.execute(query,
+                                               (params.library.lower(),)
+                                               ).fetchall()
+
+    if (rv is None) or (not isinstance(rv, (list, tuple))) or \
+        (len(rv) == 0):
+        msg : str = f'Query for \'{target}\' returned {rv}'
+        print(f'{sys.argv[0]}: ERROR {msg}')
+
+        # Raise exception to indicate failure
+        raise ValueError(msg)
+
+    if len(rv) < params.library_ord:
+        msg : str = 'Ordinal {params.library_ord} is too large. Only '
+        msg += f'{len(rv)} values are available for \'{target}\''
+        print(f'{sys.argv[0]}: ERROR {msg}')
+
+        # Raise exception to indicate failure
+        raise ValueError(msg)
+
+    ind : int = params.library_ord - 1
+    params.library_id = rv[ind][0]
+    params.library_version = rv[ind][2]
 
 
 def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
@@ -225,124 +446,189 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
     result : SimpleNamespace = SimpleNamespace()
 
     result.test_db_name : str = 'test_params.db'
+    result.library = args.library.lower()
+    result.library_ord = args.version_ordinal
 
     # HINT open test params database
     try:
-        result.conn = sqlite3.connect(result.test_db_name)
-        result.cur = result.conn.cursor()
+        open_db(result)
+
+        # HINT get library id using name and version
+        set_library_info(result)
+
+        # HINT get model id
+        result.model = args.model
+        target : str = 'model_id'
+        query = """
+            SELECT model_id FROM models
+                WHERE name = ?
+        """
+        rv = fetchone_and_tell(result, target, query, (result.model,))
+        result.model_id = rv[0]
+
+        # HINT get capability id
+        target = 'capability_id'
+        query = """
+            SELECT capability_id FROM capabilities
+                WHERE model_id = ? AND library_id = ?
+        """
+        rv = fetchone_and_tell(result,
+                               target,
+                               query,
+                               (result.model_id, result.library_id))
+        result.capability_id = rv[0]
+
+        # HINT getting template id
+        result.template_ord = args.template
+        target = 'template_id'
+        query = """
+            SELECT template_id, description FROM templates
+                WHERE capability_id = ?
+                ORDER BY template_id ASC
+        """
+        rv = fetchall_and_tell(result,
+                               target,
+                               query,
+                               (result.capability_id, ),
+                               result.template_ord)
+
+        ind : int = result.template_ord - 1
+        result.template_id = rv[ind][0]
+        result.templ_desc = rv[ind][1]
+
+        # HINT getting parameter id
+        result.param_ord = args.parameter
+        target = 'parameter_id'
+        query = """
+            SELECT param_id, [description], value FROM params
+                WHERE template_id = (?)
+            ORDER BY param_id
+        """
+        rv = fetchall_and_tell(result,
+                               target,
+                               query,
+                               (result.template_id, ),
+                               result.template_ord)
+
+        ind = result.param_ord - 1
+        result.param_id = rv[ind][0]
+        result.param_desc = rv[ind][1]
+        result.param_value = json.loads(rv[ind][2])
 
     except sqlite3.Error as exc:
-        print(f'{sys.argv[0]}: ERROR {type(exc).__name__}: str(exc)')
-
-        if result.conn:
-            result.conn.close()
+        print(f'{sys.argv[0]}: ERROR {type(exc).__name__}: {str(exc)}')
 
         # Return to indicate failure
         return None
 
-    # HINT get library id
-    result.library = args.library
-
-    qry : str = """
-        SELECT library_id FROM libraries
-            WHERE name = ?
-    """
-    rv = result.cur.execute(qry, (result.library,)).fetchone()
-    if rv is None:
-        print(f'{sys.argv[0]}: ERROR Library \'{result.library}\' not found')
+    except ValueError as exc:
+        print(f'{sys.argv[0]}: {type(exc).__name__}: {str(exc)}')
 
         # Return to indicate failure
         return None
 
-    result.library_id = rv[0]
+    # # HINT get library id
+    # result.library = args.library
 
-    # HINT get model id
-    result.model = args.model
-    qry = """
-        SELECT model_id FROM models
-            WHERE name = ?
-    """
-    rv = result.cur.execute(qry, (result.model,)).fetchone()
-    if rv is None:
-        print(f'{sys.argv[0]}: ERROR Model \'{result.model}\' not found')
+    # qry : str = """
+    #     SELECT library_id FROM libraries
+    #         WHERE name = ?
+    # """
+    # rv = result.cur.execute(qry, (result.library,)).fetchone()
+    # if rv is None:
+    #     print(f'{sys.argv[0]}: ERROR Library \'{result.library}\' not found')
 
-        # Return to indicate failure
-        return None
+    #     # Return to indicate failure
+    #     return None
 
-    result.model_id = rv[0]
+    # result.library_id = rv[0]
 
-    # HINT get capability id
-    result.model = args.model
-    qry = """
-        SELECT capability_id FROM capabilities
-            WHERE model_id = ? AND library_id = ?
-    """
-    params : Tuple[int, int] = (result.model_id, result.library_id)
-    rv = result.cur.execute(qry, params).fetchone()
-    if rv is None:
-        print(f'{sys.argv[0]}: ERROR Capability not found ' +
-              'for model {result.model} and library (result.library}')
+    # # HINT get model id
+    # result.model = args.model
+    # qry = """
+    #     SELECT model_id FROM models
+    #         WHERE name = ?
+    # """
+    # rv = result.cur.execute(qry, (result.model,)).fetchone()
+    # if rv is None:
+    #     print(f'{sys.argv[0]}: ERROR Model \'{result.model}\' not found')
 
-        # Return to indicate failure
-        return None
+    #     # Return to indicate failure
+    #     return None
 
-    result.capability_id = rv[0]
+    # result.model_id = rv[0]
 
-    # HINT getting template list
-    qry = """
-        SELECT template_id, description FROM templates
-            WHERE capability_id = ?
-            ORDER BY template_id ASC
-    """
-    rv = result.cur.execute(qry, (result.capability_id,)).fetchall()
-    if (rv is None) or (not isinstance(rv, (list, tuple))) or (len(rv) == 0):
-        print(f'{sys.argv[0]}: ERROR Unexpected error in template query. ' +
-              f'It returned {rv}')
+    # # HINT get capability id
+    # qry = """
+    #     SELECT capability_id FROM capabilities
+    #         WHERE model_id = ? AND library_id = ?
+    # """
+    # params : Tuple[int, int] = (result.model_id, result.library_id)
+    # rv = result.cur.execute(qry, params).fetchone()
+    # if rv is None:
+    #     print(f'{sys.argv[0]}: ERROR Capability not found ' +
+    #           'for model {result.model} and library (result.library}')
 
-        # Return to indicate failure
-        return None
+    #     # Return to indicate failure
+    #     return None
 
-    result.template_ord = args.template
-    if len(rv) < result.template_ord:
-        print(f'{sys.argv[0]}: ERROR Ordinal {result.template_ord} ' +
-              'is too large. Only {len(rv)} are available')
+    # result.capability_id = rv[0]
 
-        # Return to indicate failure
-        return None
+    # # HINT getting template list
+    # qry = """
+    #     SELECT template_id, description FROM templates
+    #         WHERE capability_id = ?
+    #         ORDER BY template_id ASC
+    # """
+    # rv = result.cur.execute(qry, (result.capability_id,)).fetchall()
+    # if (rv is None) or (not isinstance(rv, (list, tuple))) or (len(rv) == 0):
+    #     print(f'{sys.argv[0]}: ERROR Unexpected error in template query. ' +
+    #           f'It returned {rv}')
 
-    ind : int = result.template_ord - 1
-    result.template_id = rv[ind][0]
-    result.templ_desc = rv[ind][1]
+    #     # Return to indicate failure
+    #     return None
+
+    # result.template_ord = args.template
+    # if len(rv) < result.template_ord:
+    #     print(f'{sys.argv[0]}: ERROR Ordinal {result.template_ord} ' +
+    #           'is too large. Only {len(rv)} are available')
+
+    #     # Return to indicate failure
+    #     return None
+
+    # ind : int = result.template_ord - 1
+    # result.template_id = rv[ind][0]
+    # result.templ_desc = rv[ind][1]
 
     # print(type(result.template_id))
     # print(result)
 
-    # HINT getting parameter list
-    qry = """
-        SELECT param_id, [description], value FROM params
-            WHERE template_id = (?)
-        ORDER BY param_id
-    """
-    rv = result.cur.execute(qry, (result.template_id,)).fetchall()
-    if (rv is None) or (not isinstance(rv, (list, tuple))) or (len(rv) == 0):
-        print(f'{sys.argv[0]}: ERROR Unexpected error in template query. ' +
-              f'It returned {rv}')
+    # # HINT getting parameter list
+    # qry = """
+    #     SELECT param_id, [description], value FROM params
+    #         WHERE template_id = (?)
+    #     ORDER BY param_id
+    # """
+    # rv = result.cur.execute(qry, (result.template_id,)).fetchall()
+    # if (rv is None) or (not isinstance(rv, (list, tuple))) or (len(rv) == 0):
+    #     print(f'{sys.argv[0]}: ERROR Unexpected error in template query. ' +
+    #           f'It returned {rv}')
 
-        # Return to indicate failure
-        return None
+    #     # Return to indicate failure
+    #     return None
 
-    result.param_ord = args.parameter
-    if len(rv) < result.param_ord:
-        print(f'{sys.argv[0]}: ERROR Ordinal {result.param_ord} ' +
-              'is too large. Only {len(rv)} are available')
+    # result.param_ord = args.parameter
+    # if len(rv) < result.param_ord:
+    #     print(f'{sys.argv[0]}: ERROR Ordinal {result.param_ord} ' +
+    #           'is too large. Only {len(rv)} are available')
 
-        # Return to indicate failure
-        return None
+    #     # Return to indicate failure
+    #     return None
 
-    ind : int = result.param_ord - 1
-    result.param_id = rv[ind][0]
-    result.param_desc = rv[ind][1]
-    result.param_value = json.loads(rv[ind][2])
+    # ind : int = result.param_ord - 1
+    # result.param_id = rv[ind][0]
+    # result.param_desc = rv[ind][1]
+    # result.param_value = json.loads(rv[ind][2])
 
     result.data_first, result.data_last = \
         args.data_first, args.data_last
