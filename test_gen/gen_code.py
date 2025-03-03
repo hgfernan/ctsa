@@ -7,14 +7,14 @@ Created on Mon Feb 24 19:51:18 2025
 @author: hilton
 """
 
+import os       # listdir()
 import sys      # argv, exit()
-# import copy     # deepcopy()
 import json     # loads()
 import sqlite3  # connect(), cursor(), execute()
 # import os.path  # exists()
 import argparse # class ArgumentParser, class Namespace
 
-from typing import Any, List, Tuple
+from typing import Any, List, Set, Tuple
 from types  import SimpleNamespace
 
 # from dh_subs import DoubleHashSubs, NoneType, ItemType
@@ -105,7 +105,7 @@ def bld_code_name(library : str,model : str,
     # normal function termination
     return result
 
-
+# TODO add version to the library folder name
 def bld_source_path(library : str, code_name : str) -> str:
     """
     Build the executable path from library and code name
@@ -241,9 +241,10 @@ def version_to_int(version : str) -> int:
     return 1 + 1000 * (parts[1] + 1000 * parts[0]) + parts[2]
 
 
-def open_db(params : SimpleNamespace) -> None:
+def adjust_datafile_range(params : SimpleNamespace) -> None:
     """
-    Open the database, catches exception and raises it again
+    Adjust given data file range of numbers to their real limits.
+    Raises exception if not possible.
 
     Parameters
     ----------
@@ -253,10 +254,64 @@ def open_db(params : SimpleNamespace) -> None:
     Returns
     -------
     None
+        DESCRIPTION.
+
+    Raises
+    ------
+    ValueError
+        If the real and the given range sets have no intersection.
+
+    """
+    # HINT get the real  file limits in testdata folder
+    files : List[str] = sorted(os.listdir('../testdata'))
+    datafiles : List[dir] = list(filter(lambda x : x[-4 : ] == '.csv', files))
+    data_first = int(datafiles[0].split('.')[0])
+    data_last = int(datafiles[-1].split('.')[0])
+    
+    real_set : Set[int] = set(range(data_first, data_last + 1))
+    
+    # HINT the set given in the command line
+    given_set : Set[int] = set(params.datafile_range)
+    
+    # HINT the intersection between given and real
+    inter = real_set.intersection(given_set)
+    
+    if len(inter) == 0: 
+        msg : str = 'Wrong datafile limits. The available range is '
+        msg += 'between {data_first} and {data_range}, including'
+        
+        raise ValueError(msg)
+        
+    inter_min = min(inter)
+    inter_max = max(inter)
+    
+    if (inter_min != params.data_first) or (inter_max != params.data_last):
+        msg : str = 'The given datafile limits will be adjusted to '
+        msg += f'[{inter_min}, {inter_max}]'
+        
+        print(f'{sys.argv[0]} WARNING: {msg}')
+    
+    params.data_first, params.data_last = inter_min, inter_max
+    params.datafile_range = range(params.data_first, params.data_last + 1)
+
+def open_db(params : SimpleNamespace) -> None:
+    """
+    Open the database, catches exception and raises it again
+
+    Parameters
+    ----------
+    params : SimpleNamespace
+        Program parameters.
+
+    Returns
+    -------
+    None
 
     Raises
     ------
     sqlite3.Error
+        Could not open the database.
+        
         Raises again catched exception.
 
     """
@@ -445,7 +500,23 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
     """
     result : SimpleNamespace = SimpleNamespace()
 
+    # HINT build the datafile range
+    result.data_first, result.data_last = \
+        args.data_first, args.data_last
+
+    result.datafile_range : range = \
+        bld_range(result.data_first, result.data_last)
+        
+    # HINT make sure that data_last is updated
+    result.data_last = max(result.datafile_range)
+        
+    # HINT adjusts the datafile range to available files in `testdata`
+    adjust_datafile_range(result)
+
+    # HINT database name
     result.test_db_name : str = 'test_params.db'
+
+    # HINT library parameters
     result.library = args.library.lower()
     result.library_ord = args.version_ordinal
 
@@ -630,12 +701,6 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
     # result.param_desc = rv[ind][1]
     # result.param_value = json.loads(rv[ind][2])
 
-    result.data_first, result.data_last = \
-        args.data_first, args.data_last
-
-    result.datafile_range : range = \
-        bld_range(result.data_first, result.data_last)
-
     # Normal function termination
     return result
 
@@ -685,6 +750,8 @@ def main(argv : List[str]) -> int:
                           params.param_id, datafile_id)
 
         print(f'{datafile_id:4d} {code_name}')
+        # TODO confirm there's a file with this name in the folder
+        
         source_path = bld_source_path(params.library, code_name)
 
         datafile_id = f'{datafile_id:04d}'
