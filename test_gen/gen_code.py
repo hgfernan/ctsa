@@ -267,30 +267,30 @@ def adjust_datafile_range(params : SimpleNamespace) -> None:
     datafiles : List[dir] = list(filter(lambda x : x[-4 : ] == '.csv', files))
     data_first = int(datafiles[0].split('.')[0])
     data_last = int(datafiles[-1].split('.')[0])
-    
+
     real_set : Set[int] = set(range(data_first, data_last + 1))
-    
+
     # HINT the set given in the command line
     given_set : Set[int] = set(params.datafile_range)
-    
+
     # HINT the intersection between given and real
     inter = real_set.intersection(given_set)
-    
-    if len(inter) == 0: 
+
+    if len(inter) == 0:
         msg : str = 'Wrong datafile limits. The available range is '
         msg += 'between {data_first} and {data_range}, including'
-        
+
         raise ValueError(msg)
-        
+
     inter_min = min(inter)
     inter_max = max(inter)
-    
+
     if (inter_min != params.data_first) or (inter_max != params.data_last):
         msg : str = 'The given datafile limits will be adjusted to '
         msg += f'[{inter_min}, {inter_max}]'
-        
+
         print(f'{sys.argv[0]} WARNING: {msg}')
-    
+
     params.data_first, params.data_last = inter_min, inter_max
     params.datafile_range = range(params.data_first, params.data_last + 1)
 
@@ -311,7 +311,7 @@ def open_db(params : SimpleNamespace) -> None:
     ------
     sqlite3.Error
         Could not open the database.
-        
+
         Raises again catched exception.
 
     """
@@ -506,10 +506,10 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
 
     result.datafile_range : range = \
         bld_range(result.data_first, result.data_last)
-        
+
     # HINT make sure that data_last is updated
     result.data_last = max(result.datafile_range)
-        
+
     # HINT adjusts the datafile range to available files in `testdata`
     adjust_datafile_range(result)
 
@@ -750,11 +750,19 @@ def main(argv : List[str]) -> int:
                           params.param_id, datafile_id)
 
         print(f'{datafile_id:4d} {code_name}')
-        # TODO confirm there's a file with this name in the folder
-        
+
         source_path = bld_source_path(params.library, code_name)
 
+        # TODO change variable and field to datafile_name
         datafile_id = f'{datafile_id:04d}'
+        
+        # TODO confirm there's a file with this name in the folder
+        if not os.path.exists('../testdata/' + datafile_id + '.csv'): 
+            print(f'{argv[0]} WARNING: Missing file {datafile_id}')
+            
+            # Refuse file
+            continue
+
         fill_dict = params.param_value['parameters']['init']
         fill_dict['datafile_id'] = datafile_id
         print(fill_dict)
