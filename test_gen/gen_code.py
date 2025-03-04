@@ -7,11 +7,11 @@ Created on Mon Feb 24 19:51:18 2025
 @author: hilton
 """
 
-import os       # listdir()
+import os       # listdir(), path.exists()
 import sys      # argv, exit()
 import json     # loads()
 import sqlite3  # connect(), cursor(), execute()
-# import os.path  # exists()
+import datetime # class datetime
 import argparse # class ArgumentParser, class Namespace
 
 from typing import Any, List, Set, Tuple
@@ -269,16 +269,19 @@ def adjust_datafile_range(params : SimpleNamespace) -> None:
     data_last = int(datafiles[-1].split('.')[0])
 
     real_set : Set[int] = set(range(data_first, data_last + 1))
+    print(f'real_set {real_set}')
 
     # HINT the set given in the command line
     given_set : Set[int] = set(params.datafile_range)
+    print(f'given_set {given_set}')
 
     # HINT the intersection between given and real
     inter = real_set.intersection(given_set)
+    print(f'intersection {inter}')
 
     if len(inter) == 0:
         msg : str = 'Wrong datafile limits. The available range is '
-        msg += 'between {data_first} and {data_range}, including'
+        msg += 'between {data_first} and {data_last}, including'
 
         raise ValueError(msg)
 
@@ -421,6 +424,103 @@ def fetchall_and_tell(params : SimpleNamespace,
     # Normal function termination
     return result
 
+def insert_code_info(params : SimpleNamespace,
+                     code_name : str,
+                     datafile_id) -> None:
+    """
+    Insert code information in the database
+
+    Parameters
+    ----------
+    params : SimpleNamespace
+        Program parameters.
+
+    Returns
+    -------
+    NoneType
+        DESCRIPTION.
+
+    Raises
+    ------
+    sqlite3.Error
+    """
+    found : bool = True
+
+    select_qry : str = """
+        SELECT * FROM codes
+            WHERE filename = (?)
+            ORDER BY timestamp DESC
+    """
+
+    insert_qry : str = """
+        INSERT INTO codes
+            (filename,datafile_id,param_id,template_id)
+        VALUES (?,?,?,?)
+    """
+    insert_qry_params : Tuple[Any] = \
+        (code_name, datafile_id, params.param_id, params.template_id)
+
+    try:
+        rv : List[Tuple[Any]] = \
+            params.cur.execute(select_qry, (code_name,)).fetchall()
+
+        if len(rv) > 0:
+            found = True
+            code_id : int = rv[0][0]
+            prior : SimpleNamespace = SimpleNamespace()
+            prior.filename = rv[0][2]
+            prior.datafile_id = rv[0][3]
+            prior.param_id = rv[0][4]
+            prior.template_id = rv[0][5]
+
+            if (prior.filename != code_name) or \
+               (prior.datafile_id != datafile_id) or \
+               (prior.param_id != params.param_id) or \
+               (prior.template_id != params.template_id):
+                msg : str = 'Existing record (code_id {code_id}) has divergent '
+                msg += 'parameters. Please check'
+
+                raise ValueError(msg)
+
+            dt : datetime.datetime = \
+                datetime.datetime.now(tz=datetime.timezone.utc)
+            new_timestamp : str = dt.strftime('%Y-%m-%d %H:%M:%S')
+            update_qry : str = """
+            UPDATE codes
+                SET timestamp = (?)
+            WHERE code_id = (?)
+            """
+            params.cur.execute(update_qry, (code_id, new_timestamp))
+
+            print(f'*** Adjusted {code_id} to {new_timestamp}')
+
+            # Normal function termination
+            return
+
+    except sqlite3.Error as exc:
+        print(f'{type(exc).__name__}: {str(exc)}')
+
+        msg : str = ''
+        if not found:
+            msg = 'Could not select \'{code_name}\''
+        else:
+            msg = 'Could not update \'{code_name}\''
+
+        # HINT used `from` based on a pylint warning
+        raise ValueError(msg) from exc
+
+    try:
+        params.cur.execute(insert_qry, insert_qry_params)
+        params.conn.commit()
+
+    except sqlite3.Error as exc:
+        print(f'{type(exc).__name__}: {str(exc)}')
+
+        msg : str = 'Could not insert info about \'{code_name}\''
+
+        # HINT used `from` based on a pylint warning
+        raise ValueError(msg) from exc
+
 
 def set_library_info(params : SimpleNamespace) -> None:
     """
@@ -510,7 +610,7 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
     # HINT make sure that data_last is updated
     result.data_last = max(result.datafile_range)
 
-    # HINT adjusts the datafile range to available files in `testdata`
+    # HINT adjusts the datafile range to the available files in `testdata`
     adjust_datafile_range(result)
 
     # HINT database name
@@ -597,22 +697,6 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
 
         # Return to indicate failure
         return None
-
-    # # HINT get library id
-    # result.library = args.library
-
-    # qry : str = """
-    #     SELECT library_id FROM libraries
-    #         WHERE name = ?
-    # """
-    # rv = result.cur.execute(qry, (result.library,)).fetchone()
-    # if rv is None:
-    #     print(f'{sys.argv[0]}: ERROR Library \'{result.library}\' not found')
-
-    #     # Return to indicate failure
-    #     return None
-
-    # result.library_id = rv[0]
 
     # # HINT get model id
     # result.model = args.model
@@ -776,7 +860,13 @@ def main(argv : List[str]) -> int:
 
         print(f'Saving done {rv}')
 
-        # TODO update the database with the code generated
+        # HINT update the database with the code generated
+        insert_code_info(params, code_name, datafile_id)
+
+        print(f'Updated database with {code_name}')
+
+    if params.conn:
+        params.conn.close()
 
     # Normal function termination
     return 0
