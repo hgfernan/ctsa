@@ -67,7 +67,7 @@ class FileGenerator:
             fields = line.split('##')
 
             # HINT if a line has double hash pairs
-            if (len(fields) % 2) == 1:
+            if (len(fields) > 1) and ((len(fields) % 2) == 1):
                 # HINT copy the index to an index list
                 self.to_fill.append(index)
 
@@ -178,8 +178,16 @@ def main(argv : List[str]) -> int:
     out_f : io.TextIOWrapper
     out_name : str = 'test.dh'
     fill_dict : Dict[str, str] = {'b' : 122, 'x' : 'Hjelsberg'}
-    test_lines : List[List[str]] = ['##b\n','##b##\n', 'aaaa##b##aba\n',
-                  'aaaa##b##aba##x##\n', 'aaaa##b##aba##x##\n']
+    test_lines : List[List[str]] = [
+        '##b\n',
+        '##b##\n', 
+        'aaaa##b##aba\n',
+        'aaaa##b##aba##x##\n',
+        'aaaa##b##aba##x##\n', 
+        'aaaaaa\n',
+        'bbbbbb\n',
+        'cccccc\n',
+        ]
 
     try:
         with open(out_name, 'w', encoding='utf-8') as out_f:

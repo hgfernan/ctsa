@@ -9,7 +9,7 @@
 
 #include "sjson_macros.h" /* SJM_ macros */
 
-#define DATA_IN "../../testdata/##datafile_id##.csv"
+#define DATA_IN "../../testdata/##datafile_prefix##.csv"
 
 int main(int argc, char* const* argv) {
 	int i, L, method;

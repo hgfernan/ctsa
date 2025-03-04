@@ -753,18 +753,17 @@ def main(argv : List[str]) -> int:
 
         source_path = bld_source_path(params.library, code_name)
 
-        # TODO change variable and field to datafile_name
-        datafile_id = f'{datafile_id:04d}'
-        
-        # TODO confirm there's a file with this name in the folder
-        if not os.path.exists('../testdata/' + datafile_id + '.csv'): 
+        datafile_prefix = f'{datafile_id:04d}'
+
+        # HINT confirm there's a file with this name in the folder
+        if not os.path.exists('../testdata/' + datafile_prefix + '.csv'):
             print(f'{argv[0]} WARNING: Missing file {datafile_id}')
-            
-            # Refuse file
+
+            # Refuse file name
             continue
 
         fill_dict = params.param_value['parameters']['init']
-        fill_dict['datafile_id'] = datafile_id
+        fill_dict['datafile_prefix'] = datafile_prefix
         print(fill_dict)
 
         # HINT generate the test code, thru the double hash annotation template
