@@ -106,6 +106,7 @@ def bld_code_name(library : str,model : str,
     return result
 
 # TODO add version to the library folder name
+# def bld_source_path(library : str, version : str, code_name : str) -> str:
 def bld_source_path(library : str, code_name : str) -> str:
     """
     Build the executable path from library and code name
@@ -139,8 +140,9 @@ def bld_source_path(library : str, code_name : str) -> str:
             msg : str = f'INTERNAL ERROR Unknown library \'{library}\''
             raise ValueError(msg)
 
+    # result : str = get_source_folder(library, version) + '/' + code_name + ext
     result : str = get_source_folder(library) + '/' + code_name + ext
-
+    
     # Normal function termination
     return result
 
