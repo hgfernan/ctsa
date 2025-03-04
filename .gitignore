@@ -42,3 +42,4 @@ language.settings.xml
 
 # Temporary files
 *.csv#
+.Rhistory
