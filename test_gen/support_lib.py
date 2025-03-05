@@ -62,7 +62,7 @@ def get_source_folder(library : str, version : str) -> str:
         The source code path.
 
     """
-    return '../test/' + library.lower() + 'v' + version
+    return '../test/' + library.lower() + '_v' + version
 
 
 def get_out_prefix(library : str, version : str, model : str) -> str :
