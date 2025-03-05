@@ -23,130 +23,6 @@ from support_lib import bld_range, bld_code_name, \
     get_source_folder, bld_source_path, mk_source_folder, \
     version_to_int, open_db
 
-# def get_source_folder(library : str) -> str:
-#     """
-#     Return the repo-based path to the source folder
-
-#     Returns
-#     -------
-#     str
-#         The source code path.
-
-#     """
-#     # TODO how to recover the compilation model (debug, release, etc.)
-#     return '../test/' + library.lower()
-
-
-# def bld_range(first : int, last : int = None) -> range:
-#     """
-#     Return a closed interval interval range from the left and right limits,
-#     inclusive. Handle the case when the right limit is None.
-
-#     Parameters
-#     ----------
-#     first : int
-#         The left limit of the closed interval.
-#     last : int, optional
-#         The right limit of the closed interval. The default is None, when
-#         the interval is only the first .
-
-#     Raises
-#     ------
-#     ValueError
-#         DESCRIPTION.
-
-#     Returns
-#     -------
-#     range
-#         A closed interval of the limits, as a standard Python `range` object.
-
-#     """
-#     if first is None:
-#         msg : str = 'The first parameter must be an integer, not `None`'
-#         raise ValueError(msg)
-
-#     _last : int = last
-#     if _last is None:
-#         _last = first
-
-#     _first = min(first, _last)
-#     _last = max(first, _last)
-
-#     result : range = range(_first, _last + 1)
-
-#     # Normal function termination
-#     return result
-
-
-# def bld_code_name(library : str,model : str,
-#                   param_id : int, data_id : int) -> str:
-#     """
-#     Build the code name from library, statistical model, parameter and data.
-
-#     Parameters
-#     ----------
-#     library : str
-#         The library the code is build upon.
-#     model : str
-#         The statistical model implemented by the code.
-#     param_id : int
-#         The identification of the program parameters as a number.
-#     data_id : int
-#         The identification of the data file as a number.
-
-#     Returns
-#     -------
-#     str
-#         The full name of the code.
-
-#     """
-
-#     result : str = library.lower() + '_' + model.lower() + '_'
-#     result += f'p{param_id:04d}_d{data_id:04d}'
-
-#     # normal function termination
-#     return result
-
-# def bld_source_path(library : str, version : str, code_name : str) -> str:
-# def bld_source_path(library : str, code_name : str) -> str:
-#     """
-#     Build the executable path from library and code name
-
-#     Parameters
-#     ----------
-#     library : str
-#         The library the code is built upon.
-#     code_name : str
-#         The name of the code.
-
-#     Returns
-#     -------
-#     str
-#         Library path plus code name.
-
-#     """
-#     # TODO in the future, create an OOP solution
-#     match library.lower():
-#         case 'ctsa':
-#             ext = '.c'
-#         case 'forecast':
-#             ext = '.R'
-#         case 'pmdarima':
-#             ext = '.py'
-#         case 'pmdarima':
-#             ext = '.py'
-#         case 'statsmodels':
-#             ext = '.py'
-#         case _:
-#             msg : str = f'INTERNAL ERROR Unknown library \'{library}\''
-#             raise ValueError(msg)
-
-#     # result : str = get_source_folder(library, version) + '/' + code_name + ext
-#     result : str = get_source_folder(library) + '/' + code_name + ext
-    
-#     # Normal function termination
-#     return result
-
 
 def parse_cli(argv : List[str]) -> argparse.Namespace:
     """
@@ -299,42 +175,6 @@ def adjust_datafile_range(params : SimpleNamespace) -> None:
 
     params.data_first, params.data_last = inter_min, inter_max
     params.datafile_range = range(params.data_first, params.data_last + 1)
-
-
-# def open_db(params : SimpleNamespace) -> None:
-#     """
-#     Open the database, catches exception and raises it again
-
-#     Parameters
-#     ----------
-#     params : SimpleNamespace
-#         Program parameters.
-
-#     Returns
-#     -------
-#     None
-
-#     Raises
-#     ------
-#     sqlite3.Error
-#         Could not open the database.
-
-#         Raises again catched exception.
-
-#     """
-#     try:
-#         params.conn = sqlite3.connect(params.test_db_name)
-#         params.cur = params.conn.cursor()
-
-#     except sqlite3.Error as exc:
-#         print(f'{sys.argv[0]}: ERROR {type(exc).__name__}: {str(exc)}')
-
-#         if params.conn:
-#             params.conn.close()
-
-#         # Raise to indicate failure
-#         msg : str = f'Could not open the database \'{params.test_db_name}\''
-#         raise sqlite3.Error(msg)
 
 
 def fetchone_and_tell(params : SimpleNamespace,
@@ -626,7 +466,8 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
 
     # HINT open test params database
     try:
-        open_db(result)
+        result.conn, result.cur = \
+            open_db(result.test_db_name)
 
         # HINT get library id using name and version
         set_library_info(result)
@@ -702,20 +543,6 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
         # Return to indicate failure
         return None
 
-    # # HINT getting template list
-    # qry = """
-    #     SELECT template_id, description FROM templates
-    #         WHERE capability_id = ?
-    #         ORDER BY template_id ASC
-    # """
-    # rv = result.cur.execute(qry, (result.capability_id,)).fetchall()
-    # if (rv is None) or (not isinstance(rv, (list, tuple))) or (len(rv) == 0):
-    #     print(f'{sys.argv[0]}: ERROR Unexpected error in template query. ' +
-    #           f'It returned {rv}')
-
-    #     # Return to indicate failure
-    #     return None
-
     # result.template_ord = args.template
     # if len(rv) < result.template_ord:
     #     print(f'{sys.argv[0]}: ERROR Ordinal {result.template_ord} ' +
@@ -758,9 +585,10 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
     # result.param_desc = rv[ind][1]
     # result.param_value = json.loads(rv[ind][2])
     
-    if mk_source_folder(result.library, result.version):
+    if mk_source_folder(result.library, result.library_version):
         msg : str = 'The folder ' + \
-            f'{get_source_folder(result.library, result.version)} was created'
+            f'{get_source_folder(result.library, result.library_version)} ' +\
+            'was created'
         print(f'{sys.argv[0]} WARNING {msg}')
 
     # Normal function termination
@@ -814,7 +642,7 @@ def main(argv : List[str]) -> int:
         print(f'{datafile_id:4d} {code_name}')
 
         source_path = \
-            bld_source_path(params.library, params.version, code_name)
+            bld_source_path(params.library, params.library_version, code_name)
 
         datafile_prefix = f'{datafile_id:04d}'
 

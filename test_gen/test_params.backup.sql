@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS "argumentlims" (
 	"created_min"	TEXT NOT NULL,
 	"created_max"	TEXT NOT NULL,
 	"model_id"	INTEGER NOT NULL,
-	PRIMARY KEY("argumentlim_id" AUTOINCREMENT),
-	FOREIGN KEY("model_id") REFERENCES "models"("model_id")
+	FOREIGN KEY("model_id") REFERENCES "models"("model_id"),
+	PRIMARY KEY("argumentlim_id" AUTOINCREMENT)
 );
 DROP TABLE IF EXISTS "codes";
 CREATE TABLE IF NOT EXISTS "codes" (
@@ -28,10 +28,10 @@ CREATE TABLE IF NOT EXISTS "codes" (
 	"datafile_id"	INTEGER NOT NULL,
 	"param_id"	INTEGER NOT NULL,
 	"template_id"	INTEGER NOT NULL,
-	FOREIGN KEY("template_id") REFERENCES "templates"("template_id"),
-	FOREIGN KEY("datafile_id") REFERENCES "datafiles"("datafile_id"),
 	FOREIGN KEY("param_id") REFERENCES "params"("param_id"),
-	PRIMARY KEY("code_id" AUTOINCREMENT)
+	FOREIGN KEY("datafile_id") REFERENCES "datafiles"("datafile_id"),
+	PRIMARY KEY("code_id" AUTOINCREMENT),
+	FOREIGN KEY("template_id") REFERENCES "templates"("template_id")
 );
 DROP TABLE IF EXISTS "execs";
 CREATE TABLE IF NOT EXISTS "execs" (
@@ -43,8 +43,8 @@ CREATE TABLE IF NOT EXISTS "execs" (
 	"elapsed_time"	NUMERIC NOT NULL,
 	"process_time"	NUMERIC NOT NULL,
 	"value"	TEXT NOT NULL,
-	PRIMARY KEY("exec_id" AUTOINCREMENT),
-	FOREIGN KEY("code_id") REFERENCES "codes"("code_id")
+	FOREIGN KEY("code_id") REFERENCES "codes"("code_id"),
+	PRIMARY KEY("exec_id" AUTOINCREMENT)
 );
 DROP TABLE IF EXISTS "tests";
 CREATE TABLE IF NOT EXISTS "tests" (
@@ -54,8 +54,8 @@ CREATE TABLE IF NOT EXISTS "tests" (
 	"right_exec_id"	INTEGER NOT NULL,
 	"tolerance"	NUMERIC NOT NULL,
 	"value"	TEXT NOT NULL,
-	FOREIGN KEY("left_exec_id") REFERENCES "execs"("exec_id"),
 	FOREIGN KEY("right_exec_id") REFERENCES "execs"("exec_id"),
+	FOREIGN KEY("left_exec_id") REFERENCES "execs"("exec_id"),
 	PRIMARY KEY("test_id" AUTOINCREMENT)
 );
 DROP TABLE IF EXISTS "models";
@@ -80,9 +80,9 @@ CREATE TABLE IF NOT EXISTS "capabilities" (
 	"timestamp"	TEXT NOT NULL DEFAULT (datetime()),
 	"model_id"	INTEGER NOT NULL,
 	"library_id"	INTEGER NOT NULL,
-	FOREIGN KEY("library_id") REFERENCES "libraries"("library_id"),
 	FOREIGN KEY("model_id") REFERENCES "models"("model_id"),
-	PRIMARY KEY("capability_id" AUTOINCREMENT)
+	PRIMARY KEY("capability_id" AUTOINCREMENT),
+	FOREIGN KEY("library_id") REFERENCES "libraries"("library_id")
 );
 DROP TABLE IF EXISTS "arguments";
 CREATE TABLE IF NOT EXISTS "arguments" (
@@ -91,8 +91,8 @@ CREATE TABLE IF NOT EXISTS "arguments" (
 	"description"	TEXT NOT NULL,
 	"model_id"	INTEGER NOT NULL,
 	"value"	TEXT NOT NULL,
-	FOREIGN KEY("model_id") REFERENCES "models"("model_id"),
-	PRIMARY KEY("argument_id" AUTOINCREMENT)
+	PRIMARY KEY("argument_id" AUTOINCREMENT),
+	FOREIGN KEY("model_id") REFERENCES "models"("model_id")
 );
 DROP TABLE IF EXISTS "templates";
 CREATE TABLE IF NOT EXISTS "templates" (
@@ -101,8 +101,8 @@ CREATE TABLE IF NOT EXISTS "templates" (
 	"description"	TEXT NOT NULL,
 	"text"	TEXT NOT NULL,
 	"capability_id"	INTEGER NOT NULL,
-	FOREIGN KEY("capability_id") REFERENCES "capabilities"("capability_id"),
-	PRIMARY KEY("template_id" AUTOINCREMENT)
+	PRIMARY KEY("template_id" AUTOINCREMENT),
+	FOREIGN KEY("capability_id") REFERENCES "capabilities"("capability_id")
 );
 DROP TABLE IF EXISTS "params";
 CREATE TABLE IF NOT EXISTS "params" (
@@ -113,38 +113,38 @@ CREATE TABLE IF NOT EXISTS "params" (
 	"argument_id"	INTEGER NOT NULL,
 	"capability_id"	INTEGER NOT NULL,
 	"template_id"	INTEGER NOT NULL,
-	FOREIGN KEY("template_id") REFERENCES "templates"("template_id"),
+	FOREIGN KEY("argument_id") REFERENCES "arguments"("argument_id"),
 	PRIMARY KEY("param_id" AUTOINCREMENT),
 	FOREIGN KEY("capability_id") REFERENCES "capabilities"("capability_id"),
-	FOREIGN KEY("argument_id") REFERENCES "arguments"("argument_id")
+	FOREIGN KEY("template_id") REFERENCES "templates"("template_id")
 );
-INSERT INTO "datafiles" ("datafile_id","timestamp","from_name","total_recs","description") VALUES (324,'2025-02-24 22:54:32','../data/1m-20241125_001625-20241125_165625.csv',1000,'../testdata/0001.csv'),
- (325,'2025-02-24 22:54:32','../data/1m-20241125_001625-20241125_165625.txt',1000,'../testdata/0002.csv'),
- (326,'2025-02-24 22:54:32','../data/dowjones.dat',78,'../testdata/0003.csv'),
- (327,'2025-02-24 22:54:32','../data/e1m.dat',76,'../testdata/0004.csv'),
- (328,'2025-02-24 22:54:32','../data/e6.dat',107,'../testdata/0005.csv'),
- (329,'2025-02-24 22:54:32','../data/e6m.dat',107,'../testdata/0006.csv'),
- (330,'2025-02-24 22:54:32','../data/eusm.txt',300,'../testdata/0007.csv'),
- (331,'2025-02-24 22:54:32','../data/huron.dat',98,'../testdata/0008.csv'),
- (332,'2025-02-24 22:54:32','../data/islm.dat',112,'../testdata/0009.csv'),
- (333,'2025-02-24 22:54:32','../data/itdaily.txt',51,'../testdata/0010.csv'),
- (334,'2025-02-24 22:54:32','../data/lynx.txt',114,'../testdata/0011.csv'),
- (335,'2025-02-24 22:54:32','../data/ohlc_min.csv',10,'../testdata/0012.csv'),
- (336,'2025-02-24 22:54:33','../data/ohlc_min.txt',10,'../testdata/0013.csv'),
- (337,'2025-02-24 22:54:33','../data/seriesA.txt',197,'../testdata/0014.csv'),
- (338,'2025-02-24 22:54:33','../data/seriesB.txt',369,'../testdata/0015.csv'),
- (339,'2025-02-24 22:54:33','../data/seriesC.txt',226,'../testdata/0016.csv'),
- (340,'2025-02-24 22:54:33','../data/seriesD.txt',310,'../testdata/0017.csv'),
- (341,'2025-02-24 22:54:33','../data/seriesF.txt',70,'../testdata/0018.csv'),
- (342,'2025-02-24 22:54:33','../data/seriesG.txt',144,'../testdata/0019.csv'),
- (343,'2025-02-24 22:54:33','../data/signal.txt',256,'../testdata/0020.csv'),
- (344,'2025-02-24 22:54:33','../data/sine.txt',1000,'../testdata/0021.csv'),
- (345,'2025-02-24 22:54:33','../data/sp500_transf.dat',10136,'../testdata/0022.csv'),
- (346,'2025-02-24 22:54:34','../data/sunspots.txt',235,'../testdata/0023.csv'),
- (347,'2025-02-24 22:54:34','../data/taylor.txt',4032,'../testdata/0024.csv'),
- (348,'2025-02-24 22:54:34','../data/us-daily.csv',43,'../testdata/0025.csv'),
- (349,'2025-02-24 22:54:34','../data/usdaily.txt',43,'../testdata/0026.csv'),
- (350,'2025-02-24 22:54:34','../data/wineind.txt',176,'../testdata/0027.csv');
+INSERT INTO "datafiles" ("datafile_id","timestamp","from_name","total_recs","description") VALUES (1,'2025-03-04 21:24:47','../data/1m-20241125_001625-20241125_165625.csv',1000,'../testdata/0001.csv'),
+ (2,'2025-03-04 21:24:47','../data/1m-20241125_001625-20241125_165625.txt',1000,'../testdata/0002.csv'),
+ (3,'2025-03-04 21:24:47','../data/dowjones.dat',78,'../testdata/0003.csv'),
+ (4,'2025-03-04 21:24:47','../data/e1m.dat',76,'../testdata/0004.csv'),
+ (5,'2025-03-04 21:24:48','../data/e6.dat',107,'../testdata/0005.csv'),
+ (6,'2025-03-04 21:24:48','../data/e6m.dat',107,'../testdata/0006.csv'),
+ (7,'2025-03-04 21:24:48','../data/eusm.txt',300,'../testdata/0007.csv'),
+ (8,'2025-03-04 21:24:48','../data/huron.dat',98,'../testdata/0008.csv'),
+ (9,'2025-03-04 21:24:48','../data/islm.dat',112,'../testdata/0009.csv'),
+ (10,'2025-03-04 21:24:48','../data/itdaily.txt',51,'../testdata/0010.csv'),
+ (11,'2025-03-04 21:24:48','../data/lynx.txt',114,'../testdata/0011.csv'),
+ (12,'2025-03-04 21:24:48','../data/ohlc_min.csv',10,'../testdata/0012.csv'),
+ (13,'2025-03-04 21:24:48','../data/ohlc_min.txt',10,'../testdata/0013.csv'),
+ (14,'2025-03-04 21:24:48','../data/seriesA.txt',197,'../testdata/0014.csv'),
+ (15,'2025-03-04 21:24:48','../data/seriesB.txt',369,'../testdata/0015.csv'),
+ (16,'2025-03-04 21:24:49','../data/seriesC.txt',226,'../testdata/0016.csv'),
+ (17,'2025-03-04 21:24:49','../data/seriesD.txt',310,'../testdata/0017.csv'),
+ (18,'2025-03-04 21:24:49','../data/seriesF.txt',70,'../testdata/0018.csv'),
+ (19,'2025-03-04 21:24:49','../data/seriesG.txt',144,'../testdata/0019.csv'),
+ (20,'2025-03-04 21:24:49','../data/signal.txt',256,'../testdata/0020.csv'),
+ (21,'2025-03-04 21:24:49','../data/sine.txt',1000,'../testdata/0021.csv'),
+ (22,'2025-03-04 21:24:49','../data/sp500_transf.dat',10136,'../testdata/0022.csv'),
+ (23,'2025-03-04 21:24:49','../data/sunspots.txt',235,'../testdata/0023.csv'),
+ (24,'2025-03-04 21:24:49','../data/taylor.txt',4032,'../testdata/0024.csv'),
+ (25,'2025-03-04 21:24:49','../data/us-daily.csv',43,'../testdata/0025.csv'),
+ (26,'2025-03-04 21:24:50','../data/usdaily.txt',43,'../testdata/0026.csv'),
+ (27,'2025-03-04 21:24:50','../data/wineind.txt',176,'../testdata/0027.csv');
 INSERT INTO "models" ("model_id","timestamp","name","description") VALUES (1,'2025-02-24 15:37:02','AR','Autoregressive model'),
  (2,'2025-02-24 15:38:19','ARIMA','Autoregressive integrated moving average model'),
  (3,'2025-02-24 15:39:50','SARIMA','Seasonal autoregressive integrated moving average model'),

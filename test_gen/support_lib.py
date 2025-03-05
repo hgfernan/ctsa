@@ -126,7 +126,7 @@ def bld_range(first : int, last : int = None) -> range:
     return result
 
 
-def bld_code_name(library : str,model : str,
+def bld_code_name(library : str, model : str,
                   param_id : int, data_id : int) -> str:
     """
     Build the code name from library, statistical model, parameter and data.
@@ -154,7 +154,6 @@ def bld_code_name(library : str,model : str,
 
     # normal function termination
     return result
-
 
 
 def bld_executable_path(library : str, version : str, code_name : str) -> str:
@@ -288,7 +287,7 @@ def mk_source_folder(library : str, version : str) -> bool:
         available
 
     """
-    folder : str = get_source_folder(library.lower, version)
+    folder : str = get_source_folder(library.lower(), version)
 
     if not os.path.exists(folder):
         try:
@@ -310,6 +309,7 @@ def mk_source_folder(library : str, version : str) -> bool:
     # Normal function termination
     return False
 
+
 def open_db(db_name : str) -> \
     Tuple[sqlite3.Connection, sqlite3.Cursor]:
     """
@@ -317,8 +317,8 @@ def open_db(db_name : str) -> \
 
     Parameters
     ----------
-    params : SimpleNamespace
-        Program parameters.
+    db_name : str
+        Database file name.
 
     Returns
     -------
