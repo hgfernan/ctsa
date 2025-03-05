@@ -19,132 +19,132 @@ from types  import SimpleNamespace
 
 # from dh_subs import DoubleHashSubs, NoneType, ItemType
 from file_generator import FileGenerator
+from support_lib import get_source_folder, bld_range, bld_code_name, \
+    bld_source_path, version_to_int
+
+# def get_source_folder(library : str) -> str:
+#     """
+#     Return the repo-based path to the source folder
+
+#     Returns
+#     -------
+#     str
+#         The source code path.
+
+#     """
+#     # TODO how to recover the compilation model (debug, release, etc.)
+#     return '../test/' + library.lower()
 
 
-def get_source_folder(library : str) -> str:
-    """
-    Return the repo-based path to the source folder
+# def bld_range(first : int, last : int = None) -> range:
+#     """
+#     Return a closed interval interval range from the left and right limits,
+#     inclusive. Handle the case when the right limit is None.
 
-    Returns
-    -------
-    str
-        The source code path.
+#     Parameters
+#     ----------
+#     first : int
+#         The left limit of the closed interval.
+#     last : int, optional
+#         The right limit of the closed interval. The default is None, when
+#         the interval is only the first .
 
-    """
-    # TODO how to recover the compilation model (debug, release, etc.)
-    return '../test/' + library.lower()
+#     Raises
+#     ------
+#     ValueError
+#         DESCRIPTION.
 
+#     Returns
+#     -------
+#     range
+#         A closed interval of the limits, as a standard Python `range` object.
 
-def bld_range(first : int, last : int = None) -> range:
-    """
-    Return a closed interval interval range from the left and right limits,
-    inclusive. Handle the case when the right limit is None.
+#     """
+#     if first is None:
+#         msg : str = 'The first parameter must be an integer, not `None`'
+#         raise ValueError(msg)
 
-    Parameters
-    ----------
-    first : int
-        The left limit of the closed interval.
-    last : int, optional
-        The right limit of the closed interval. The default is None, when
-        the interval is only the first .
+#     _last : int = last
+#     if _last is None:
+#         _last = first
 
-    Raises
-    ------
-    ValueError
-        DESCRIPTION.
+#     _first = min(first, _last)
+#     _last = max(first, _last)
 
-    Returns
-    -------
-    range
-        A closed interval of the limits, as a standard Python `range` object.
+#     result : range = range(_first, _last + 1)
 
-    """
-    if first is None:
-        msg : str = 'The first parameter must be an integer, not `None`'
-        raise ValueError(msg)
-
-    _last : int = last
-    if _last is None:
-        _last = first
-
-    _first = min(first, _last)
-    _last = max(first, _last)
-
-    result : range = range(_first, _last + 1)
-
-    # Normal function termination
-    return result
+#     # Normal function termination
+#     return result
 
 
-def bld_code_name(library : str,model : str,
-                  param_id : int, data_id : int) -> str:
-    """
-    Build the code name from library, statistical model, parameter and data.
+# def bld_code_name(library : str,model : str,
+#                   param_id : int, data_id : int) -> str:
+#     """
+#     Build the code name from library, statistical model, parameter and data.
 
-    Parameters
-    ----------
-    library : str
-        The library the code is build upon.
-    model : str
-        The statistical model implemented by the code.
-    param_id : int
-        The identification of the program parameters as a number.
-    data_id : int
-        The identification of the data file as a number.
+#     Parameters
+#     ----------
+#     library : str
+#         The library the code is build upon.
+#     model : str
+#         The statistical model implemented by the code.
+#     param_id : int
+#         The identification of the program parameters as a number.
+#     data_id : int
+#         The identification of the data file as a number.
 
-    Returns
-    -------
-    str
-        The full name of the code.
+#     Returns
+#     -------
+#     str
+#         The full name of the code.
 
-    """
+#     """
 
-    result : str = library.lower() + '_' + model.lower() + '_'
-    result += f'p{param_id:04d}_d{data_id:04d}'
+#     result : str = library.lower() + '_' + model.lower() + '_'
+#     result += f'p{param_id:04d}_d{data_id:04d}'
 
-    # normal function termination
-    return result
+#     # normal function termination
+#     return result
 
-# TODO add version to the library folder name
 # def bld_source_path(library : str, version : str, code_name : str) -> str:
-def bld_source_path(library : str, code_name : str) -> str:
-    """
-    Build the executable path from library and code name
+# def bld_source_path(library : str, code_name : str) -> str:
+#     """
+#     Build the executable path from library and code name
 
-    Parameters
-    ----------
-    library : str
-        The library the code is built upon.
-    code_name : str
-        The name of the code.
+#     Parameters
+#     ----------
+#     library : str
+#         The library the code is built upon.
+#     code_name : str
+#         The name of the code.
 
-    Returns
-    -------
-    str
-        Library path plus code name.
+#     Returns
+#     -------
+#     str
+#         Library path plus code name.
 
-    """
-    # TODO in the future, create an OOP solution
-    match library.lower():
-        case 'ctsa':
-            ext = '.c'
-        case 'forecast':
-            ext = '.R'
-        case 'pmdarima':
-            ext = '.py'
-        case 'pmdarima':
-            ext = '.py'
-        case 'statsmodels':
-            ext = '.py'
-        case _:
-            msg : str = f'INTERNAL ERROR Unknown library \'{library}\''
-            raise ValueError(msg)
+#     """
+#     # TODO in the future, create an OOP solution
+#     match library.lower():
+#         case 'ctsa':
+#             ext = '.c'
+#         case 'forecast':
+#             ext = '.R'
+#         case 'pmdarima':
+#             ext = '.py'
+#         case 'pmdarima':
+#             ext = '.py'
+#         case 'statsmodels':
+#             ext = '.py'
+#         case _:
+#             msg : str = f'INTERNAL ERROR Unknown library \'{library}\''
+#             raise ValueError(msg)
 
-    # result : str = get_source_folder(library, version) + '/' + code_name + ext
-    result : str = get_source_folder(library) + '/' + code_name + ext
+#     # result : str = get_source_folder(library, version) + '/' + code_name + ext
+#     result : str = get_source_folder(library) + '/' + code_name + ext
     
-    # Normal function termination
-    return result
+#     # Normal function termination
+#     return result
 
 
 def parse_cli(argv : List[str]) -> argparse.Namespace:
@@ -218,29 +218,29 @@ def parse_cli(argv : List[str]) -> argparse.Namespace:
     return result
 
 
-def version_to_int(version : str) -> int:
-    """
-    Map the usual version triplet 'major.minor.patch' (where to all three
-    numbers are integers) an integer number
+# def version_to_int(version : str) -> int:
+#     """
+#     Map the usual version triplet 'major.minor.patch' (where to all three
+#     numbers are integers) an integer number
 
-    To be used in SQLite `ORDER BY` clauses.
+#     To be used in SQLite `ORDER BY` clauses.
 
-    OBS: Contributed by ChatGPT
+#     OBS: Contributed by ChatGPT
 
-    Parameters
-    ----------
-    version : str
-        A triplet 'major.minor.patch'.
+#     Parameters
+#     ----------
+#     version : str
+#         A triplet 'major.minor.patch'.
 
-    Returns
-    -------
-    int
-        A single integer number mapping the version triplet.
+#     Returns
+#     -------
+#     int
+#         A single integer number mapping the version triplet.
 
-    """
-    # HINT Ensure 3 parts
-    parts = list(map(int, (version.split('.') + ['0', '0'])[:3]))
-    return 1 + 1000 * (parts[1] + 1000 * parts[0]) + parts[2]
+#     """
+#     # HINT Ensure 3 parts
+#     parts = list(map(int, (version.split('.') + ['0', '0'])[:3]))
+#     return 1 + 1000 * (parts[1] + 1000 * parts[0]) + parts[2]
 
 
 def adjust_datafile_range(params : SimpleNamespace) -> None:
@@ -298,6 +298,7 @@ def adjust_datafile_range(params : SimpleNamespace) -> None:
 
     params.data_first, params.data_last = inter_min, inter_max
     params.datafile_range = range(params.data_first, params.data_last + 1)
+
 
 def open_db(params : SimpleNamespace) -> None:
     """

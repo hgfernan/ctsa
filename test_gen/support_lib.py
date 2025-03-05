@@ -8,6 +8,35 @@ Created on Tue Mar  4 18:53:09 2025
 """
 
 import os # path.exists()
+import sys # argv
+import sqlite3 # connect(), class Connection
+
+from typing import Tuple
+
+def version_to_int(version : str) -> int:
+    """
+    Map the usual version triplet 'major.minor.patch' (where to all three
+    numbers are integers) an integer number
+
+    To be used in SQLite `ORDER BY` clauses.
+
+    OBS: Contributed by ChatGPT
+
+    Parameters
+    ----------
+    version : str
+        A triplet 'major.minor.patch'.
+
+    Returns
+    -------
+    int
+        A single integer number mapping the version triplet.
+
+    """
+    # HINT Ensure 3 parts
+    parts = list(map(int, (version.split('.') + ['0', '0'])[:3]))
+    return 1 + 1000 * (parts[1] + 1000 * parts[0]) + parts[2]
+
 
 def get_executable_folder(library : str, version : str) -> str:
     """
@@ -33,7 +62,6 @@ def get_source_folder(library : str, version : str) -> str:
         The source code path.
 
     """
-    # TODO how to recover the compilation model (debug, release, etc.)
     return '../test/' + library.lower() + 'v' + version
 
 
@@ -210,10 +238,30 @@ def mk_executable_folder(library : str, version : str) -> bool:
     Raises
     -------
     ValueError
-        If executable folder could not be created or if its parent folder was 
+        If executable folder could not be created or if its parent folder was
         not available
 
     """
+    folder : str = get_executable_folder(library.lower, version)
+
+    if not os.path.exists(folder):
+        try:
+            os.mkdir(folder)
+
+            return True
+
+        except FileExistsError as exc:
+            msg : str = 'OS ERROR ? Executable folder {folder} already exists'
+
+            raise ValueError(msg) from exc
+
+        except FileNotFoundError as exc:
+            msg : str = 'Parent folder to executable {folder} doesn\'t exist'
+
+            raise ValueError(msg) from exc
+
+    # Normal function termination
+    return False
 
 
 def mk_source_folder(library : str, version : str) -> bool:
@@ -235,27 +283,72 @@ def mk_source_folder(library : str, version : str) -> bool:
     Raises
     -------
     ValueError
-        If source folder could not be created or if its parent folder was not 
+        If source folder could not be created or if its parent folder was not
         available
 
     """
     folder : str = get_source_folder(library.lower, version)
-    
+
     if not os.path.exists(folder):
         try:
             os.mkdir(folder)
-            
+
             return True
-            
+
         except FileExistsError as exc:
-            msg : str = 'OS ERROR ? Folder {folder} already exists'
-            
+            msg : str = 'OS ERROR ? Executable folder {folder} already exists'
+
             raise ValueError(msg) from exc
-            
+
         except FileNotFoundError as exc:
-            msg : str = 'Parent folder to path {folder} doesn\'t exist'
-            
+            msg : str = 'Parent folder to executable folder {folder} '
+            msg += 'doesn\'t exist'
+
             raise ValueError(msg) from exc
-            
+
     # Normal function termination
-    return False    
+    return False
+
+def open_db(db_name : str) -> \
+    Tuple[sqlite3.Connection, sqlite3.Cursor]:
+    """
+    Open the database, catches exception and raises it again
+
+    Parameters
+    ----------
+    params : SimpleNamespace
+        Program parameters.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    sqlite3.Error
+        Could not open the database.
+
+        Raises again catched exception.
+
+    """
+    conn : sqlite3.Connection = None
+    cur : sqlite3.Cursor = None
+    
+    try:
+        conn = sqlite3.connect(db_name)
+        cur = conn.cursor()
+
+    except sqlite3.Error as exc:
+        print(f'{sys.argv[0]}: ERROR {type(exc).__name__}: {str(exc)}')
+
+        if conn:
+            conn.close()
+
+        # Raise to indicate failure
+        msg : str = f'Could not open the database \'{db_name}\''
+        raise sqlite3.Error(msg)
+
+    result : Tuple[sqlite3.Connection, sqlite3.Cursor] = conn, cur
+    
+    # Normal function termination
+    return result
