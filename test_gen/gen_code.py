@@ -19,8 +19,9 @@ from types  import SimpleNamespace
 
 # from dh_subs import DoubleHashSubs, NoneType, ItemType
 from file_generator import FileGenerator
-from support_lib import get_source_folder, bld_range, bld_code_name, \
-    bld_source_path, version_to_int
+from support_lib import bld_range, bld_code_name, \
+    get_source_folder, bld_source_path, mk_source_folder, \
+    version_to_int, open_db
 
 # def get_source_folder(library : str) -> str:
 #     """
@@ -300,40 +301,40 @@ def adjust_datafile_range(params : SimpleNamespace) -> None:
     params.datafile_range = range(params.data_first, params.data_last + 1)
 
 
-def open_db(params : SimpleNamespace) -> None:
-    """
-    Open the database, catches exception and raises it again
+# def open_db(params : SimpleNamespace) -> None:
+#     """
+#     Open the database, catches exception and raises it again
 
-    Parameters
-    ----------
-    params : SimpleNamespace
-        Program parameters.
+#     Parameters
+#     ----------
+#     params : SimpleNamespace
+#         Program parameters.
 
-    Returns
-    -------
-    None
+#     Returns
+#     -------
+#     None
 
-    Raises
-    ------
-    sqlite3.Error
-        Could not open the database.
+#     Raises
+#     ------
+#     sqlite3.Error
+#         Could not open the database.
 
-        Raises again catched exception.
+#         Raises again catched exception.
 
-    """
-    try:
-        params.conn = sqlite3.connect(params.test_db_name)
-        params.cur = params.conn.cursor()
+#     """
+#     try:
+#         params.conn = sqlite3.connect(params.test_db_name)
+#         params.cur = params.conn.cursor()
 
-    except sqlite3.Error as exc:
-        print(f'{sys.argv[0]}: ERROR {type(exc).__name__}: {str(exc)}')
+#     except sqlite3.Error as exc:
+#         print(f'{sys.argv[0]}: ERROR {type(exc).__name__}: {str(exc)}')
 
-        if params.conn:
-            params.conn.close()
+#         if params.conn:
+#             params.conn.close()
 
-        # Raise to indicate failure
-        msg : str = f'Could not open the database \'{params.test_db_name}\''
-        raise sqlite3.Error(msg)
+#         # Raise to indicate failure
+#         msg : str = f'Could not open the database \'{params.test_db_name}\''
+#         raise sqlite3.Error(msg)
 
 
 def fetchone_and_tell(params : SimpleNamespace,
@@ -701,37 +702,6 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
         # Return to indicate failure
         return None
 
-    # # HINT get model id
-    # result.model = args.model
-    # qry = """
-    #     SELECT model_id FROM models
-    #         WHERE name = ?
-    # """
-    # rv = result.cur.execute(qry, (result.model,)).fetchone()
-    # if rv is None:
-    #     print(f'{sys.argv[0]}: ERROR Model \'{result.model}\' not found')
-
-    #     # Return to indicate failure
-    #     return None
-
-    # result.model_id = rv[0]
-
-    # # HINT get capability id
-    # qry = """
-    #     SELECT capability_id FROM capabilities
-    #         WHERE model_id = ? AND library_id = ?
-    # """
-    # params : Tuple[int, int] = (result.model_id, result.library_id)
-    # rv = result.cur.execute(qry, params).fetchone()
-    # if rv is None:
-    #     print(f'{sys.argv[0]}: ERROR Capability not found ' +
-    #           'for model {result.model} and library (result.library}')
-
-    #     # Return to indicate failure
-    #     return None
-
-    # result.capability_id = rv[0]
-
     # # HINT getting template list
     # qry = """
     #     SELECT template_id, description FROM templates
@@ -787,6 +757,11 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
     # result.param_id = rv[ind][0]
     # result.param_desc = rv[ind][1]
     # result.param_value = json.loads(rv[ind][2])
+    
+    if mk_source_folder(result.library, result.version):
+        msg : str = 'The folder ' + \
+            f'{get_source_folder(result.library, result.version)} was created'
+        print(f'{sys.argv[0]} WARNING {msg}')
 
     # Normal function termination
     return result
@@ -838,7 +813,8 @@ def main(argv : List[str]) -> int:
 
         print(f'{datafile_id:4d} {code_name}')
 
-        source_path = bld_source_path(params.library, code_name)
+        source_path = \
+            bld_source_path(params.library, params.version, code_name)
 
         datafile_prefix = f'{datafile_id:04d}'
 

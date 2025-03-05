@@ -271,9 +271,10 @@ def mk_source_folder(library : str, version : str) -> bool:
     Parameters
     ----------
     library : str
-        DESCRIPTION.
+        The library in use. Will be lowercased.
     version : str
-        DESCRIPTION.
+        The version. Usually a triplet of three integers
+        'major.minor.patch'.
 
     Returns
     -------
