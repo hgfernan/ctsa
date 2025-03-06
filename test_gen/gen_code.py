@@ -514,7 +514,7 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
 
         # HINT getting parameter id
         result.param_ord = args.parameter
-        target = 'parameter_id'
+        target = 'param_id'
         query = """
             SELECT param_id, [description], value FROM params
                 WHERE template_id = (?)
@@ -542,48 +542,6 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
 
         # Return to indicate failure
         return None
-
-    # result.template_ord = args.template
-    # if len(rv) < result.template_ord:
-    #     print(f'{sys.argv[0]}: ERROR Ordinal {result.template_ord} ' +
-    #           'is too large. Only {len(rv)} are available')
-
-    #     # Return to indicate failure
-    #     return None
-
-    # ind : int = result.template_ord - 1
-    # result.template_id = rv[ind][0]
-    # result.templ_desc = rv[ind][1]
-
-    # print(type(result.template_id))
-    # print(result)
-
-    # # HINT getting parameter list
-    # qry = """
-    #     SELECT param_id, [description], value FROM params
-    #         WHERE template_id = (?)
-    #     ORDER BY param_id
-    # """
-    # rv = result.cur.execute(qry, (result.template_id,)).fetchall()
-    # if (rv is None) or (not isinstance(rv, (list, tuple))) or (len(rv) == 0):
-    #     print(f'{sys.argv[0]}: ERROR Unexpected error in template query. ' +
-    #           f'It returned {rv}')
-
-    #     # Return to indicate failure
-    #     return None
-
-    # result.param_ord = args.parameter
-    # if len(rv) < result.param_ord:
-    #     print(f'{sys.argv[0]}: ERROR Ordinal {result.param_ord} ' +
-    #           'is too large. Only {len(rv)} are available')
-
-    #     # Return to indicate failure
-    #     return None
-
-    # ind : int = result.param_ord - 1
-    # result.param_id = rv[ind][0]
-    # result.param_desc = rv[ind][1]
-    # result.param_value = json.loads(rv[ind][2])
     
     if mk_source_folder(result.library, result.library_version):
         msg : str = 'The folder ' + \

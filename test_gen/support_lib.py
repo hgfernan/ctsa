@@ -25,8 +25,9 @@ def version_to_int(version : str) -> int:
     Parameters
     ----------
     version : str
-        A triplet 'major.minor.patch'.
-
+        The library version. Usually a triplet of three integers 
+        'major.minor.patch'.
+        
     Returns
     -------
     int
@@ -37,6 +38,24 @@ def version_to_int(version : str) -> int:
     parts = list(map(int, (version.split('.') + ['0', '0'])[:3]))
     return 1 + 1000 * (parts[1] + 1000 * parts[0]) + parts[2]
 
+def bld_library_fullname(library : str, version : str) -> str:
+    """
+    Build the composite of library and version
+
+    Parameters
+    ----------
+    library : str
+        Library name. Will be lowercased.
+    version : str
+        The library version. Usually a triplet of three integers 
+        'major.minor.patch'.
+
+    Returns
+    -------
+    str
+        The concatenation f'{library}_v{version}'.
+
+    """
 
 def get_executable_folder(library : str, version : str) -> str:
     """
@@ -49,7 +68,7 @@ def get_executable_folder(library : str, version : str) -> str:
 
     """
     # TODO how to recover the compilation model (debug, release, etc.) ?
-    return '../Bin/DEBUG/' + library.lower() + 'v' + version
+    return '../Bin/DEBUG/' + library.lower() + '_v' + version
 
 
 def get_source_folder(library : str, version : str) -> str:

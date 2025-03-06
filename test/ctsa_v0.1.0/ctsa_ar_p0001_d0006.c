@@ -7,7 +7,7 @@
 
 #include "csv_in.h" /* csv_in() */
 
-#include "sjson_macros.h" /* SJM_ macros */
+#include "sjson_macros.h" /* SJM_* macros */
 
 #define DATA_IN "../../testdata/0006.csv"
 

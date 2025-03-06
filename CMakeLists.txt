@@ -39,6 +39,6 @@ include_directories(${COMMON_BIN_PATH})
 
 add_subdirectory(src)
 add_subdirectory(test) 
-add_subdirectory(test/ctsa) 
+add_subdirectory(test/ctsa_v0.1.0) 
 
 install(DIRECTORY ${CTSA_SRC_ROOT}/include/ DESTINATION include FILES_MATCHING PATTERN "*.h")
