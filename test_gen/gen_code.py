@@ -21,7 +21,7 @@ from types  import SimpleNamespace
 from file_generator import FileGenerator
 from support_lib import bld_range, bld_code_name, \
     get_source_folder, bld_source_path, mk_source_folder, \
-    version_to_int, open_db
+    version_to_int, open_db, get_database_name
 
 
 def parse_cli(argv : List[str]) -> argparse.Namespace:
@@ -458,7 +458,7 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
     adjust_datafile_range(result)
 
     # HINT database name
-    result.test_db_name : str = 'test_params.db'
+    result.test_db_name : str = get_database_name()
 
     # HINT library parameters
     result.library = args.library.lower()

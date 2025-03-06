@@ -14,81 +14,107 @@ import sqlite3  # connect(), cursor(), execute()
 import argparse # class ArgumentParser, class Namespace
 import subprocess # class CalledProcessError, run()
 
-from typing import List, Tuple
-
+from typing import Any, Dict, List, Tuple
 from types  import SimpleNamespace
 
-def get_executable_folder(library : str) -> str:
+from cpuinfo import get_cpu_info
+
+from support_lib import get_executable_folder, get_out_prefix, bld_range, \
+    bld_code_name, bld_executable_path
+
+def get_hardware_info() -> Dict[str, str]:
     """
-    Return the executable path
+    Get the most relevant hardware information
 
     Returns
     -------
-    str
-        The binary executable path.
+    Dict[str, Any]
+        Information about the processor.
 
     """
-    # TODO how to recover the compilation model (debug, release, etc.)
-    return '../Bin/DEBUG/' + library.lower()
+    info : Dict[str, Any] = get_cpu_info()
+    result : Dict[str, str] = {}
 
-def get_out_prefix(library : str, model : str) -> str :
-    """
-    Return the base path where output file folders should be placed
-
-    Parameters
-    ----------
-    library : str
-        The library that is used.
-    model : str
-        The library that is used.
-
-    Returns
-    -------
-    str
-        A base path where the output folders will be placed.
-
-    """
-    return get_executable_folder(library) + '/' + model.lower()
-
-def bld_range(first : int, last : int = None) -> range:
-    """
-    Return a closed interval interval range from the left and right limits,
-    inclusive. Handle the case when the right limit is None.
-
-    Parameters
-    ----------
-    first : int
-        The left limit of the closed interval.
-    last : int, optional
-        The right limit of the closed interval. The default is None, when
-        the interval is only the first .
-
-    Raises
-    ------
-    ValueError
-        DESCRIPTION.
-
-    Returns
-    -------
-    range
-        A closed interval of the limits, as a standard Python `range` object.
-
-    """
-    if first is None:
-        msg : str = 'The first parameter must be an integer, not `None`'
-        raise ValueError(msg)
-
-    _last : int = last
-    if _last is None:
-        _last = first
-
-    _first = min(first, _last)
-    _last = max(first, _last)
-
-    result : range = range(_first, _last + 1)
+    for key in ['arch', 'arch_string_raw', 'bits', 'brand_raw', 'count',
+                'hz_actual_friendly', 'vendor_id_raw']:
+        result[key] = info[key]
 
     # Normal function termination
     return result
+
+# get execution_info() -> Dict[str, Any]:
+
+# def get_executable_folder(library : str) -> str:
+#     """
+#     Return the executable path
+
+#     Returns
+#     -------
+#     str
+#         The binary executable path.
+
+#     """
+#     # TODO how to recover the compilation model (debug, release, etc.)
+#     return '../Bin/DEBUG/' + library.lower()
+
+# def get_out_prefix(library : str, model : str) -> str :
+#     """
+#     Return the base path where output file folders should be placed
+
+#     Parameters
+#     ----------
+#     library : str
+#         The library that is used.
+#     model : str
+#         The library that is used.
+
+#     Returns
+#     -------
+#     str
+#         A base path where the output folders will be placed.
+
+#     """
+#     return get_executable_folder(library) + '/' + model.lower()
+
+# def bld_range(first : int, last : int = None) -> range:
+#     """
+#     Return a closed interval interval range from the left and right limits,
+#     inclusive. Handle the case when the right limit is None.
+
+#     Parameters
+#     ----------
+#     first : int
+#         The left limit of the closed interval.
+#     last : int, optional
+#         The right limit of the closed interval. The default is None, when
+#         the interval is only the first .
+
+#     Raises
+#     ------
+#     ValueError
+#         DESCRIPTION.
+
+#     Returns
+#     -------
+#     range
+#         A closed interval of the limits, as a standard Python `range` object.
+
+#     """
+#     if first is None:
+#         msg : str = 'The first parameter must be an integer, not `None`'
+#         raise ValueError(msg)
+
+#     _last : int = last
+#     if _last is None:
+#         _last = first
+
+#     _first = min(first, _last)
+#     _last = max(first, _last)
+
+#     result : range = range(_first, _last + 1)
+
+#     # Normal function termination
+#     return result
 
 
 def parse_cli(argv : List[str]) -> argparse.Namespace:
@@ -153,57 +179,57 @@ def parse_cli(argv : List[str]) -> argparse.Namespace:
     return result
 
 
-def bld_code_name(library : str,model : str,
-                  param_id : int, data_id : int) -> str:
-    """
-    Build the code name from library, statistical model, parameter and data.
+# def bld_code_name(library : str,model : str,
+#                   param_id : int, data_id : int) -> str:
+#     """
+#     Build the code name from library, statistical model, parameter and data.
 
-    Parameters
-    ----------
-    library : str
-        The library the code is build upon.
-    model : str
-        The statistical model implemented by the code.
-    param_id : int
-        The identification of the program parameters as a number.
-    data_id : int
-        The identification of the data file as a number.
+#     Parameters
+#     ----------
+#     library : str
+#         The library the code is build upon.
+#     model : str
+#         The statistical model implemented by the code.
+#     param_id : int
+#         The identification of the program parameters as a number.
+#     data_id : int
+#         The identification of the data file as a number.
 
-    Returns
-    -------
-    str
-        The full name of the code.
+#     Returns
+#     -------
+#     str
+#         The full name of the code.
 
-    """
+#     """
 
-    result : str = library.lower() + '_' + model.lower() + '_'
-    result += f'p{param_id:04d}_d{data_id:04d}'
+#     result : str = library.lower() + '_' + model.lower() + '_'
+#     result += f'p{param_id:04d}_d{data_id:04d}'
 
-    # normal function termination
-    return result
+#     # normal function termination
+#     return result
 
 
-def bld_executable_path(library : str, code_name : str) -> str:
-    """
-    Build the executable path from library and code name
+# def bld_executable_path(library : str, code_name : str) -> str:
+#     """
+#     Build the executable path from library and code name
 
-    Parameters
-    ----------
-    library : str
-        The library the code is built upon.
-    code_name : str
-        The name of the code.
+#     Parameters
+#     ----------
+#     library : str
+#         The library the code is built upon.
+#     code_name : str
+#         The name of the code.
 
-    Returns
-    -------
-    str
-        Library path plus code name.
+#     Returns
+#     -------
+#     str
+#         Library path plus code name.
 
-    """
-    result : str = library + '/' + code_name
+#     """
+#     result : str = library + '/' + code_name
 
-    # Normal function termination
-    return result
+#     # Normal function termination
+#     return result
 
 
 def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
@@ -243,11 +269,11 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
 
 # TODO get executable id from database
 # TODO save json result in the database
-# TODO generate log and error msgs for this executin
+# TODO generate log and error msgs for this execution
 # TODO save execution results in the database
 
 def save_output(exec_id : int, out_prefix : str, o_type : str, o_buf : bytes) \
-    -> bool:
+    -> None:
     """
     Save program output with proper name in the proper folder
 
@@ -265,13 +291,21 @@ def save_output(exec_id : int, out_prefix : str, o_type : str, o_buf : bytes) \
 
     Returns
     -------
-    bool
-        True if saving was fine, False otherwise.
-        To be replaced as an enum
+    None
+
+    Raises
+    -------
+    ValueError
+        In case of invalid o_type
+
+    OSError
+        In case of problem writing the output
 
     """
-    if o_type not in ['err', 'log']:
-        return False
+    valid_o_type : List[str] = ['err', 'log']
+    if o_type not in valid_o_type:
+        raise ValueError(f'Invalid o_type \'{o_type}\'. Should be one of ' +
+                         valid_o_type)
 
     if len(o_buf) > 0:
         out_str : str = o_buf.decode(encoding='utf-8')
@@ -281,19 +315,7 @@ def save_output(exec_id : int, out_prefix : str, o_type : str, o_buf : bytes) \
         with open(out_name, 'w', encoding='utf-8') as out_f:
             out_f.write(out_str)
 
-        # TODO handle exception
-
-    # Normal function termination
-    return True
-
-def get_next_exec() -> Tuple[int, sqlite3.Cursor]:
-    # TODO handle exceptions
-    con : sqlite3.Connection = sqlite3.connect('test_params.db')
-    cursor : sqlite3.Cursor = con.cursor()
-    query : str = 'SELECT MAX(exec_id) FROM execs;'
-
-    rv = cursor.execute(query).fetchall()
-
+        # HINT let the caller handle the exception
 
 
 def main(argv : List[str]) -> int:
@@ -320,7 +342,7 @@ def main(argv : List[str]) -> int:
         # Return to indicate failure
         return 1
 
-    print(args)
+    # print(args)
 
     params : SimpleNamespace = interpret_args(args)
     if params is None:
@@ -329,88 +351,78 @@ def main(argv : List[str]) -> int:
         # Return to indicate failure
         return 2
 
-    print(params)
+    # print(params)
 
+    # TODO get processor hardware parameters
+    hw_info : Dict[str, str] = get_hardware_info()
+
+    msg : str = ''
     exec_id :int = 1
     for param_id in params.param_range:
         for data_id in params.data_range:
             code_name : str = \
                 bld_code_name(params.library, params.model, param_id, data_id)
-            print(code_name)
+            # print(code_name)
 
-            executable_name = './' + code_name
+            executable_name : str = './' + code_name
+            executable_folder : str = \
+                get_executable_folder(params.library, params.version)
+            out_prefix : str = \
+                get_out_prefix(params.librry, params.versio, params.model)
 
             try:
                 # TODO get the exec_id from the database
                 print([executable_name, str(exec_id)])
                 proc = subprocess.run([executable_name, str(exec_id)],
                 # proc = subprocess.run(['ls', '-l'],
-                                    cwd=get_executable_folder(params.library),
+                                    cwd=executable_folder,
                                     stdout=subprocess.PIPE,
                                     stderr=subprocess.PIPE,
                                     check=True
                                    )
 
-                rv : bool = True
-                rv = save_output(exec_id,
-                                 get_out_prefix(params.library, params.model),
-                                 'log',
-                                 proc.stdout)
-                # TODO handle save_output() failure
+                save_output(exec_id, out_prefix, 'log', proc.stdout)
 
-                rv = save_output(exec_id,
-                                 get_out_prefix(params.library, params.model),
-                                 'err',
-                                 proc.stderr)
-                # TODO handle save_output() failure
+                save_output(exec_id, out_prefix, 'err', proc.stderr)
 
-                # err_str : str = proc.stderr.decode(encoding='utf-8')
-                # if len(err_str) > 0:
-                #     err_name : str = \
-                #         get_out_prefix(params.library, params.model)
-                #     err_name += f'/exec_errs/{exec_id:04d}.err'
-                #     with open(err_name, 'w', encoding='utf-8') as err_f:
-                #         err_f.write(err_str)
+                # TODO get the process JSON output
 
-                # log_str : str = proc.stdout.decode(encoding='utf-8')
-                # log_name : str = get_out_prefix(params.library, params.model)
-                # log_name += f'/exec_logs/{exec_id:04d}.log'
-                # with open(log_name, 'w', encoding='utf-8') as log_f:
-                #     log_f.write(log_str)
+                # TODO add the hardware descriptioon to the JSON output
+
+                # TODO save the JSON output in the database
 
             except FileNotFoundError as exc:
                 print(f'{type(exc).__name__}: {str(exc)}')
 
-                rv : bool = True
-                # msg : str = f'{type(exc).__name__}: {str(exc)}'
-                msg : str = f'{type(exc).__name__}: {str(exc)}'
-                rv = save_output(exec_id,
-                                 get_out_prefix(params.library, params.model),
-                                 'err',
-                                msg.encode('utf-8')
-                                )
-                # TODO handle save_output() failure
+                msg = f'{type(exc).__name__}: {str(exc)}'
+                save_output(exec_id, out_prefix, 'err', msg.encode('utf-8'))
 
                 print(msg)
 
             except subprocess.CalledProcessError as exc:
-                msg : str = ''
+                msg = ''
                 msg += f'{type(exc).__name__}: {str(exc)}\n'
-                msg += f'Return code {exc.returncode}\n'
+                msg += f'\tReturn code {exc.returncode}\n'
                 if exc.returncode < 0:
-                    msg += f'Signal: {signal.Signals(-exc.returncode).name})\n'
+                    msg += f'\tSignal: {signal.Signals(-exc.returncode).name})'
+                    msg += '\n'
 
                 print(type(exc.output))
                 msg += '\n' + 40*'-' + '\n\n'
                 msg += exc.output.decode(encoding='utf-8') + '\n'
                 print(msg)
 
-                rv : bool = True
-                rv = save_output(exec_id,
-                                 get_out_prefix(params.library, params.model),
-                                 'err',
-                                 msg.encode(encoding='utf-8')
-                                )
+                save_output(exec_id, out_prefix, 'err',
+                            msg.encode(encoding='utf-8'))
+
+            except ValueError as exc:
+                msg += f'{type(exc).__name__}: {str(exc)}\n'
+                print(f'{argv[0]}: INTERNAL ERROR {msg}')
+
+            except OSError as exc:
+                msg += f'{type(exc).__name__}: {str(exc)}\n'
+                print(f'{argv[0]}: ERROR Could not write output')
+                print(f'\t{msg}')
 
             finally:
                 exec_id += 1

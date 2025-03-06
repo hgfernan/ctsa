@@ -56,6 +56,13 @@ def bld_library_fullname(library : str, version : str) -> str:
         The concatenation f'{library}_v{version}'.
 
     """
+    result : str = library.lower() + '_v' + version
+    
+    # Normal function termination
+    return result
+
+def get_database_name() -> str:
+    return 'test_params.db'
 
 def get_executable_folder(library : str, version : str) -> str:
     """
@@ -68,7 +75,8 @@ def get_executable_folder(library : str, version : str) -> str:
 
     """
     # TODO how to recover the compilation model (debug, release, etc.) ?
-    return '../Bin/DEBUG/' + library.lower() + '_v' + version
+    library_version : str = bld_library_fullname(library, version)
+    return '../Bin/DEBUG/' + library_version
 
 
 def get_source_folder(library : str, version : str) -> str:
