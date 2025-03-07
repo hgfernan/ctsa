@@ -145,20 +145,24 @@ def parse_cli(argv : List[str]) -> argparse.Namespace:
                         help=help_str
                        )
 
+    def_int : int = 1
+    help_str = 'Library version ordinal from newest to oldest -- 1 is the '
+    help_str += f'current, 2 is the previous. Default: {def_int}'
+    parser.add_argument('-v', '--version_ordinal',
+                        default=def_int,
+                        help=help_str
+                       )
+
     help_str = 'Statistical model to be used'
     choices : List[str] = ['AR', 'ARMA', 'ARIMA', 'SARIMA', 'SARIMAX']
     parser.add_argument('-m', '--model', choices=choices,
                         required=True, help=help_str
                        )
 
-    help_str = 'First of a range of parameter identification numbers'
-    parser.add_argument('-P', '--param_first', type=int, required=True,
-                        help=help_str
-                       )
-
-    help_str = 'Last of a range of parameter identification numbers, '
-    help_str += 'including'
-    parser.add_argument('-p', '--param_last', type=int,
+    def_int : int = 1
+    help_str = 'Parameter identification number ordinal from newest to oldest '
+    help_str += f'-- 1 is the current, 2 is the previous. Default: {def_int}'
+    parser.add_argument('-p', '--param_ordinal', type=int, required=True,
                         help=help_str
                        )
 
