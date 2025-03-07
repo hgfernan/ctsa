@@ -12,9 +12,12 @@ set(CTSA_SRC_ROOT ${PROJECT_SOURCE_DIR} CACHE PATH "ctsa source root")
 set(COMMON_BIN_PATH ${CMAKE_BINARY_DIR}/Bin)
 set(LIBRARY_OUTPUT_PATH ${COMMON_BIN_PATH}/${CMAKE_BUILD_TYPE})
 set(EXECUTABLE_OUTPUT_PATH ${COMMON_BIN_PATH}/${CMAKE_BUILD_TYPE})
+
+# save_build_dir.cmake
+file(WRITE "${CMAKE_SOURCE_DIR}/latest_build_dir.txt" "${EXECUTABLE_OUTPUT_PATH}")
+
 # set where to find additional cmake modules if any
 set(CMAKE_MODULE_PATH ${CTSA_SRC_ROOT}/cmake ${CMAKE_MODULE_PATH})
-
 
 set(CTSA_VERSION "0.1.0" CACHE STRING "ctsa version" FORCE)
 message(">>> Building ctsa version: ${CTSA_VERSION}")

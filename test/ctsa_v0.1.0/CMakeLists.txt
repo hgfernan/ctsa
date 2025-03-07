@@ -6,8 +6,6 @@ file(GLOB TEST_SOURCES "./ctsa_ar_p0001_d*.c")
 # Function to add a test executable
 function(add_test_executable test_source)
     get_filename_component(test_name ${test_source} NAME_WE)
-	message(WARNING "source " ${test_source})
-	message(WARNING "target " ${test_name})
     
     add_executable(${test_name} 
 				   ${test_source}
@@ -20,7 +18,7 @@ function(add_test_executable test_source)
     target_link_libraries(${test_name} ctsalib m)
     set_target_properties(${test_name}
         PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}/ctsa"
+        RUNTIME_OUTPUT_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}/test/ctsa_v0.1.0"
 	)
 endfunction()
 
