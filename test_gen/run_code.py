@@ -258,10 +258,9 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
 
     result.model = args.model
     result.library = args.library
-
-    result.param_range = bld_range(args.param_first, args.param_last)
-    result.param_first, result.param_last = \
-        result.param_range.start, result.param_range.stop - 1
+    result.library_ord = args.library_ordinal
+    
+    # TODO find library version string
 
     result.data_range = bld_range(args.data_first, args.data_last)
     result.data_first, result.data_last = \

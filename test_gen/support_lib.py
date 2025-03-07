@@ -11,7 +11,8 @@ import os # path.exists()
 import sys # argv
 import sqlite3 # connect(), class Connection
 
-from typing import Tuple
+from typing import Any, List, Tuple
+from types import SimpleNamespace
 
 def version_to_int(version : str) -> int:
     """
@@ -380,3 +381,63 @@ def open_db(db_name : str) -> \
     
     # Normal function termination
     return result
+
+
+def set_library_info(params : SimpleNamespace) -> None:
+    """
+    Set the version of a library, given its ordinal number, where
+    1 is the latest version, 2 is the prior version, etc. in the
+    program parameter.
+
+    Set also the unique identifier `library_id` of the pair library
+    and version in the program parameter.
+
+    Parameters
+    ----------
+    params : SimpleNamespace
+        An object containing .
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    ValueError
+        If the information sought is not found.
+
+    """
+    # HINT registers the function in SQLite database
+    params.conn.create_function("version_to_int", 1,
+                                version_to_int,
+                                deterministic=True)
+    query : str = """
+    SELECT library_id, name, version FROM libraries
+        WHERE name = (?)
+        ORDER BY name ASC,
+            version_to_int(version) DESC
+    """
+    target : str = 'library_id'
+    rv : List[Tuple[Any]] = params.cur.execute(query,
+                                               (params.library.lower(),)
+                                               ).fetchall()
+
+    if (rv is None) or (not isinstance(rv, (list, tuple))) or \
+        (len(rv) == 0):
+        msg : str = f'Query for \'{target}\' returned {rv}'
+        print(f'{sys.argv[0]}: ERROR {msg}')
+
+        # Raise exception to indicate failure
+        raise ValueError(msg)
+
+    if len(rv) < params.library_ord:
+        msg : str = 'Ordinal {params.library_ord} is too large. Only '
+        msg += f'{len(rv)} values are available for \'{target}\''
+        print(f'{sys.argv[0]}: ERROR {msg}')
+
+        # Raise exception to indicate failure
+        raise ValueError(msg)
+
+    ind : int = params.library_ord - 1
+    params.library_id = rv[ind][0]
+    params.library_version = rv[ind][2]
