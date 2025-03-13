@@ -11,7 +11,7 @@ import os # path.exists()
 import sys # argv
 import sqlite3 # connect(), class Connection
 
-from typing import Any, List, Tuple
+from typing import Any, List, Set, Tuple
 from types import SimpleNamespace
 
 def version_to_int(version : str) -> int:
@@ -441,3 +441,153 @@ def set_library_info(params : SimpleNamespace) -> None:
     ind : int = params.library_ord - 1
     params.library_id = rv[ind][0]
     params.library_version = rv[ind][2]
+    
+
+def fetchone_and_tell(params : SimpleNamespace,
+                      target : str,
+                      query : str,
+                      query_params : Tuple[Any, Any]) -> Tuple[Any]:
+    """
+    Query the database, fetch one row for the answer and raises exception
+    if something was wrong
+
+    Parameters
+    ----------
+    params : SimpleNamespace
+        An object with program parameters.
+    query : str
+        The query to be applied to the database.
+    qry_params : Tuple[Any, Any]
+        The parameters to the query.
+
+    Returns
+    -------
+    Tuple[Any]
+        The answer, as a tuple.
+
+    Raises
+    ------
+    ValueError
+        If the information sought is not found.
+
+    """
+    result = params.cur.execute(query, query_params).fetchone()
+    if result is None:
+        msg : str = f'Query for \'{target}\' returned empty'
+        print(f'{sys.argv[0]}: ERROR {msg}')
+
+        # Raise exception to indicate failure
+        raise ValueError(msg)
+
+    # Normal function termination
+    return result
+
+
+def fetchall_and_tell(params : SimpleNamespace,
+                      target : str,
+                      query : str,
+                      query_params : Tuple[Any, Any],
+                      ordinal : int) -> List[Tuple[Any]]:
+    """
+    Query the database, fetch all row of the answer and raises exception
+    if something was wrong
+
+    Parameters
+    ----------
+    params : SimpleNamespace
+        An object with program parameters.
+    query : str
+        The query to be applied to the database.
+    query_params : Tuple[Any, Any]
+        The parameters to the query.
+    ordinal : int
+        The position of the expected answer in the list
+
+    Returns
+    -------
+    List[Tuple[Any]]
+        The answer, as a list of tuples.
+
+    Raises
+    ------
+    ValueError
+        If the information sought is not found.
+
+    """
+    result = params.cur.execute(query, query_params).fetchall()
+    if (result is None) or (not isinstance(result, (list, tuple))) or \
+        (len(result) == 0):
+        msg : str = f'Query for \'{target}\' returned {result}'
+        print(f'{sys.argv[0]}: ERROR {msg}')
+
+        # Raise exception to indicate failure
+        raise ValueError(msg)
+
+    if len(result) < ordinal:
+        msg : str = 'Ordinal {ordinal} is too large. Only '
+        msg += f'{len(result)} values are available for \'{target}\''
+        print(f'{sys.argv[0]}: ERROR {msg}')
+
+        # Raise exception to indicate failure
+        raise ValueError(msg)
+
+    # Normal function termination
+    return result
+
+
+def adjust_datafile_range(params : SimpleNamespace) -> None:
+    """
+    Adjust given data file range of numbers to their real limits.
+    Raises exception if not possible.
+
+    Parameters
+    ----------
+    params : SimpleNamespace
+        DESCRIPTION.
+
+    Returns
+    -------
+    None
+        DESCRIPTION.
+
+    Raises
+    ------
+    ValueError
+        If the real and the given range sets have no intersection.
+
+    """
+    # HINT get the real  file limits in testdata folder
+    files : List[str] = sorted(os.listdir('../testdata'))
+    datafiles : List[dir] = list(filter(lambda x : x[-4 : ] == '.csv', files))
+    data_first = int(datafiles[0].split('.')[0])
+    data_last = int(datafiles[-1].split('.')[0])
+
+    real_set : Set[int] = set(range(data_first, data_last + 1))
+    print(f'real_set {real_set}')
+
+    # HINT the set given in the command line
+    given_set : Set[int] = set(params.datafile_range)
+    print(f'given_set {given_set}')
+
+    # HINT the intersection between given and real
+    inter = real_set.intersection(given_set)
+    print(f'intersection {inter}')
+
+    if len(inter) == 0:
+        msg : str = 'Wrong datafile limits. The available range is '
+        msg += 'between {data_first} and {data_last}, including'
+
+        raise ValueError(msg)
+
+    inter_min = min(inter)
+    inter_max = max(inter)
+
+    if (inter_min != params.data_first) or (inter_max != params.data_last):
+        msg : str = 'The given datafile limits will be adjusted to '
+        msg += f'[{inter_min}, {inter_max}]'
+
+        print(f'{sys.argv[0]} WARNING: {msg}')
+
+    params.data_first, params.data_last = inter_min, inter_max
+    params.datafile_range = range(params.data_first, params.data_last + 1)
+    

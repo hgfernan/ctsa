@@ -8,19 +8,22 @@ Created on Mon Feb 10 20:06:16 2025
 """
 
 import sys      # argv, exit()
+import json     # loads()
 import signal   # Signal
 import sqlite3  # connect(), cursor(), execute()
 # import os.path  # exists()
 import argparse # class ArgumentParser, class Namespace
 import subprocess # class CalledProcessError, run()
 
-from typing import Any, Dict, List, Tuple
+# from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 from types  import SimpleNamespace
 
 from cpuinfo import get_cpu_info
 
 from support_lib import get_executable_folder, get_out_prefix, bld_range, \
-    bld_code_name, bld_executable_path
+    bld_code_name, bld_executable_path, open_db, set_library_info, \
+    fetchall_and_tell, fetchone_and_tell
 
 def get_hardware_info() -> Dict[str, str]:
     """
@@ -42,79 +45,24 @@ def get_hardware_info() -> Dict[str, str]:
     # Normal function termination
     return result
 
-# get execution_info() -> Dict[str, Any]:
 
-# def get_executable_folder(library : str) -> str:
-#     """
-#     Return the executable path
+def get_execution_info(params : SimpleNamespace) -> Dict[str, Any]:
+    """
+    Upload JSON results from executable files, and add them to 
+    parameter JSON, to have `execs` value `field`
 
-#     Returns
-#     -------
-#     str
-#         The binary executable path.
+    Parameters
+    ----------
+    params : SimpleNamespace
+        Program parameters.
 
-#     """
-#     # TODO how to recover the compilation model (debug, release, etc.)
-#     return '../Bin/DEBUG/' + library.lower()
+    Returns
+    -------
+    Dict[str, Any]
+        DESCRIPTION.
 
-# def get_out_prefix(library : str, model : str) -> str :
-#     """
-#     Return the base path where output file folders should be placed
+    """
 
-#     Parameters
-#     ----------
-#     library : str
-#         The library that is used.
-#     model : str
-#         The library that is used.
-
-#     Returns
-#     -------
-#     str
-#         A base path where the output folders will be placed.
-
-#     """
-#     return get_executable_folder(library) + '/' + model.lower()
-
-# def bld_range(first : int, last : int = None) -> range:
-#     """
-#     Return a closed interval interval range from the left and right limits,
-#     inclusive. Handle the case when the right limit is None.
-
-#     Parameters
-#     ----------
-#     first : int
-#         The left limit of the closed interval.
-#     last : int, optional
-#         The right limit of the closed interval. The default is None, when
-#         the interval is only the first .
-
-#     Raises
-#     ------
-#     ValueError
-#         DESCRIPTION.
-
-#     Returns
-#     -------
-#     range
-#         A closed interval of the limits, as a standard Python `range` object.
-
-#     """
-#     if first is None:
-#         msg : str = 'The first parameter must be an integer, not `None`'
-#         raise ValueError(msg)
-
-#     _last : int = last
-#     if _last is None:
-#         _last = first
-
-#     _first = min(first, _last)
-#     _last = max(first, _last)
-
-#     result : range = range(_first, _last + 1)
-
-#     # Normal function termination
-#     return result
 
 
 def parse_cli(argv : List[str]) -> argparse.Namespace:
@@ -159,10 +107,8 @@ def parse_cli(argv : List[str]) -> argparse.Namespace:
                         required=True, help=help_str
                        )
 
-    def_int : int = 1
-    help_str = 'Parameter identification number ordinal from newest to oldest '
-    help_str += f'-- 1 is the current, 2 is the previous. Default: {def_int}'
-    parser.add_argument('-p', '--param_ordinal', type=int, required=True,
+    help_str = 'Parameter number'
+    parser.add_argument('-p', '--parameter', type=int, required=True,
                         help=help_str
                        )
 
@@ -181,59 +127,6 @@ def parse_cli(argv : List[str]) -> argparse.Namespace:
 
     # Normal function termination
     return result
-
-
-# def bld_code_name(library : str,model : str,
-#                   param_id : int, data_id : int) -> str:
-#     """
-#     Build the code name from library, statistical model, parameter and data.
-
-#     Parameters
-#     ----------
-#     library : str
-#         The library the code is build upon.
-#     model : str
-#         The statistical model implemented by the code.
-#     param_id : int
-#         The identification of the program parameters as a number.
-#     data_id : int
-#         The identification of the data file as a number.
-
-#     Returns
-#     -------
-#     str
-#         The full name of the code.
-
-#     """
-
-#     result : str = library.lower() + '_' + model.lower() + '_'
-#     result += f'p{param_id:04d}_d{data_id:04d}'
-
-#     # normal function termination
-#     return result
-
-
-# def bld_executable_path(library : str, code_name : str) -> str:
-#     """
-#     Build the executable path from library and code name
-
-#     Parameters
-#     ----------
-#     library : str
-#         The library the code is built upon.
-#     code_name : str
-#         The name of the code.
-
-#     Returns
-#     -------
-#     str
-#         Library path plus code name.
-
-#     """
-#     result : str = library + '/' + code_name
-
-#     # Normal function termination
-#     return result
 
 
 def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
@@ -260,11 +153,90 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
     result.library = args.library
     result.library_ord = args.library_ordinal
     
-    # TODO find library version string
+    # HINT open test params database
+    try:
+        # HINT find library version string and library id from library ordinal
+        result.conn, result.cur = \
+            open_db(result.test_db_name)
+
+        # HINT get library id using name and version
+        set_library_info(result)
+
+        # HINT get model id
+        result.model = args.model
+        target : str = 'model_id'
+        query = """
+            SELECT model_id FROM models
+                WHERE name = ?
+        """
+        rv = fetchone_and_tell(result, target, query, (result.model,))
+        result.model_id = rv[0]
+
+        # HINT get capability id
+        target = 'capability_id'
+        query = """
+            SELECT capability_id FROM capabilities
+                WHERE model_id = ? AND library_id = ?
+        """
+        rv = fetchone_and_tell(result,
+                               target,
+                               query,
+                               (result.model_id, result.library_id))
+        result.capability_id = rv[0]
+        
+        # HINT getting parameter id
+        result.param_ord = args.parameter
+        target = 'param_id'
+        query = """
+            SELECT param_id, [description], value FROM params
+                WHERE capability_id = (?)
+            ORDER BY param_id
+        """
+        rv = fetchall_and_tell(result,
+                               target,
+                               query,
+                               (result.template_id, ),
+                               result.template_ord)
+
+        ind = result.param_ord - 1
+        result.param_id = rv[ind][0]
+        result.param_desc = rv[ind][1]
+        result.param_value = json.loads(rv[ind][2])
+        
+        # TODO get the exec_id from the database
+        result.model = args.model
+        target : str = 'exec_id'
+        query = """
+            SELECT MAX(exec_id FROM execs
+        """
+        rv = fetchone_and_tell(result, target, query, (result.model,))
+        result.model_id = rv[0]
+
+    except sqlite3.Error as exc:
+        print(f'{sys.argv[0]}: ERROR {type(exc).__name__}: {str(exc)}')
+
+        # Return to indicate failure
+        return None
+
+    except ValueError as exc:
+        print(f'{sys.argv[0]}: {type(exc).__name__}: {str(exc)}')
+
+        # Return to indicate failure
+        return None
 
     result.data_range = bld_range(args.data_first, args.data_last)
     result.data_first, result.data_last = \
         result.data_range.start, result.data_range.stop - 1
+        
+    # TODO adjust datafile range
+        
+    # TODO create model folder if not available
+        
+    # TODO create execution output folder if not available
+        
+    # TODO create execution error folder if not available
+        
+    # TODO create execution JSON folder if not available
 
     # Normal function termination
     return result
@@ -370,11 +342,14 @@ def main(argv : List[str]) -> int:
             executable_name : str = './' + code_name
             executable_folder : str = \
                 get_executable_folder(params.library, params.version)
+                
+            executable_name =\
+                bld_executable_path(params.library, params.version, code_name)
+
             out_prefix : str = \
-                get_out_prefix(params.librry, params.versio, params.model)
+                get_out_prefix(params.librry, params.version, params.model)
 
             try:
-                # TODO get the exec_id from the database
                 print([executable_name, str(exec_id)])
                 proc = subprocess.run([executable_name, str(exec_id)],
                 # proc = subprocess.run(['ls', '-l'],

@@ -29,9 +29,9 @@ CREATE TABLE IF NOT EXISTS "codes" (
 	"param_id"	INTEGER NOT NULL,
 	"template_id"	INTEGER NOT NULL,
 	FOREIGN KEY("param_id") REFERENCES "params"("param_id"),
+	FOREIGN KEY("template_id") REFERENCES "templates"("template_id"),
 	FOREIGN KEY("datafile_id") REFERENCES "datafiles"("datafile_id"),
-	PRIMARY KEY("code_id" AUTOINCREMENT),
-	FOREIGN KEY("template_id") REFERENCES "templates"("template_id")
+	PRIMARY KEY("code_id" AUTOINCREMENT)
 );
 DROP TABLE IF EXISTS "execs";
 CREATE TABLE IF NOT EXISTS "execs" (
@@ -43,8 +43,8 @@ CREATE TABLE IF NOT EXISTS "execs" (
 	"elapsed_time"	NUMERIC NOT NULL,
 	"process_time"	NUMERIC NOT NULL,
 	"value"	TEXT NOT NULL,
-	FOREIGN KEY("code_id") REFERENCES "codes"("code_id"),
-	PRIMARY KEY("exec_id" AUTOINCREMENT)
+	PRIMARY KEY("exec_id" AUTOINCREMENT),
+	FOREIGN KEY("code_id") REFERENCES "codes"("code_id")
 );
 DROP TABLE IF EXISTS "tests";
 CREATE TABLE IF NOT EXISTS "tests" (
@@ -54,9 +54,9 @@ CREATE TABLE IF NOT EXISTS "tests" (
 	"right_exec_id"	INTEGER NOT NULL,
 	"tolerance"	NUMERIC NOT NULL,
 	"value"	TEXT NOT NULL,
+	PRIMARY KEY("test_id" AUTOINCREMENT),
 	FOREIGN KEY("right_exec_id") REFERENCES "execs"("exec_id"),
-	FOREIGN KEY("left_exec_id") REFERENCES "execs"("exec_id"),
-	PRIMARY KEY("test_id" AUTOINCREMENT)
+	FOREIGN KEY("left_exec_id") REFERENCES "execs"("exec_id")
 );
 DROP TABLE IF EXISTS "models";
 CREATE TABLE IF NOT EXISTS "models" (
@@ -91,8 +91,8 @@ CREATE TABLE IF NOT EXISTS "arguments" (
 	"description"	TEXT NOT NULL,
 	"model_id"	INTEGER NOT NULL,
 	"value"	TEXT NOT NULL,
-	PRIMARY KEY("argument_id" AUTOINCREMENT),
-	FOREIGN KEY("model_id") REFERENCES "models"("model_id")
+	FOREIGN KEY("model_id") REFERENCES "models"("model_id"),
+	PRIMARY KEY("argument_id" AUTOINCREMENT)
 );
 DROP TABLE IF EXISTS "templates";
 CREATE TABLE IF NOT EXISTS "templates" (
@@ -101,8 +101,8 @@ CREATE TABLE IF NOT EXISTS "templates" (
 	"description"	TEXT NOT NULL,
 	"text"	TEXT NOT NULL,
 	"capability_id"	INTEGER NOT NULL,
-	PRIMARY KEY("template_id" AUTOINCREMENT),
-	FOREIGN KEY("capability_id") REFERENCES "capabilities"("capability_id")
+	FOREIGN KEY("capability_id") REFERENCES "capabilities"("capability_id"),
+	PRIMARY KEY("template_id" AUTOINCREMENT)
 );
 DROP TABLE IF EXISTS "params";
 CREATE TABLE IF NOT EXISTS "params" (
@@ -113,10 +113,10 @@ CREATE TABLE IF NOT EXISTS "params" (
 	"argument_id"	INTEGER NOT NULL,
 	"capability_id"	INTEGER NOT NULL,
 	"template_id"	INTEGER NOT NULL,
-	FOREIGN KEY("argument_id") REFERENCES "arguments"("argument_id"),
-	PRIMARY KEY("param_id" AUTOINCREMENT),
+	FOREIGN KEY("template_id") REFERENCES "templates"("template_id"),
 	FOREIGN KEY("capability_id") REFERENCES "capabilities"("capability_id"),
-	FOREIGN KEY("template_id") REFERENCES "templates"("template_id")
+	PRIMARY KEY("param_id" AUTOINCREMENT),
+	FOREIGN KEY("argument_id") REFERENCES "arguments"("argument_id")
 );
 INSERT INTO "datafiles" ("datafile_id","timestamp","from_name","total_recs","description") VALUES (1,'2025-03-04 21:24:47','../data/1m-20241125_001625-20241125_165625.csv',1000,'../testdata/0001.csv'),
  (2,'2025-03-04 21:24:47','../data/1m-20241125_001625-20241125_165625.txt',1000,'../testdata/0002.csv'),
@@ -145,6 +145,33 @@ INSERT INTO "datafiles" ("datafile_id","timestamp","from_name","total_recs","des
  (25,'2025-03-04 21:24:49','../data/us-daily.csv',43,'../testdata/0025.csv'),
  (26,'2025-03-04 21:24:50','../data/usdaily.txt',43,'../testdata/0026.csv'),
  (27,'2025-03-04 21:24:50','../data/wineind.txt',176,'../testdata/0027.csv');
+INSERT INTO "codes" ("code_id","timestamp","filename","datafile_id","param_id","template_id") VALUES (1,'2025-03-05 14:25:21','ctsa_ar_p0001_d0001',1,1,1),
+ (2,'2025-03-05 14:29:51','ctsa_ar_p0001_d0002',2,1,1),
+ (3,'2025-03-05 14:29:51','ctsa_ar_p0001_d0003',3,1,1),
+ (4,'2025-03-05 14:29:51','ctsa_ar_p0001_d0004',4,1,1),
+ (5,'2025-03-05 14:29:51','ctsa_ar_p0001_d0005',5,1,1),
+ (6,'2025-03-05 14:29:51','ctsa_ar_p0001_d0006',6,1,1),
+ (7,'2025-03-05 14:29:51','ctsa_ar_p0001_d0007',7,1,1),
+ (8,'2025-03-05 14:29:51','ctsa_ar_p0001_d0008',8,1,1),
+ (9,'2025-03-05 14:29:51','ctsa_ar_p0001_d0009',9,1,1),
+ (10,'2025-03-05 14:29:51','ctsa_ar_p0001_d0010',10,1,1),
+ (11,'2025-03-05 14:29:51','ctsa_ar_p0001_d0011',11,1,1),
+ (12,'2025-03-05 14:29:52','ctsa_ar_p0001_d0012',12,1,1),
+ (13,'2025-03-05 14:29:52','ctsa_ar_p0001_d0013',13,1,1),
+ (14,'2025-03-05 14:29:52','ctsa_ar_p0001_d0014',14,1,1),
+ (15,'2025-03-05 14:29:52','ctsa_ar_p0001_d0015',15,1,1),
+ (16,'2025-03-05 14:29:52','ctsa_ar_p0001_d0016',16,1,1),
+ (17,'2025-03-05 14:29:52','ctsa_ar_p0001_d0017',17,1,1),
+ (18,'2025-03-05 14:29:52','ctsa_ar_p0001_d0018',18,1,1),
+ (19,'2025-03-05 14:29:52','ctsa_ar_p0001_d0019',19,1,1),
+ (20,'2025-03-05 14:29:52','ctsa_ar_p0001_d0020',20,1,1),
+ (21,'2025-03-05 14:29:52','ctsa_ar_p0001_d0021',21,1,1),
+ (22,'2025-03-05 14:29:52','ctsa_ar_p0001_d0022',22,1,1),
+ (23,'2025-03-05 14:29:52','ctsa_ar_p0001_d0023',23,1,1),
+ (24,'2025-03-05 14:29:53','ctsa_ar_p0001_d0024',24,1,1),
+ (25,'2025-03-05 14:29:53','ctsa_ar_p0001_d0025',25,1,1),
+ (26,'2025-03-05 14:29:53','ctsa_ar_p0001_d0026',26,1,1),
+ (27,'2025-03-05 14:29:53','ctsa_ar_p0001_d0027',27,1,1);
 INSERT INTO "models" ("model_id","timestamp","name","description") VALUES (1,'2025-02-24 15:37:02','AR','Autoregressive model'),
  (2,'2025-02-24 15:38:19','ARIMA','Autoregressive integrated moving average model'),
  (3,'2025-02-24 15:39:50','SARIMA','Seasonal autoregressive integrated moving average model'),

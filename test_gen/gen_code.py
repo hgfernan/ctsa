@@ -14,14 +14,15 @@ import sqlite3  # connect(), cursor(), execute()
 import datetime # class datetime
 import argparse # class ArgumentParser, class Namespace
 
-from typing import Any, List, Set, Tuple
+from typing import Any, List, Tuple
 from types  import SimpleNamespace
 
 # from dh_subs import DoubleHashSubs, NoneType, ItemType
 from file_generator import FileGenerator
 from support_lib import bld_range, bld_code_name, \
     get_source_folder, bld_source_path, mk_source_folder, \
-    version_to_int, open_db, get_database_name, set_library_info
+    open_db, get_database_name, set_library_info, \
+    fetchone_and_tell, fetchall_and_tell, adjust_datafile_range
 
 
 def parse_cli(argv : List[str]) -> argparse.Namespace:
@@ -95,178 +96,96 @@ def parse_cli(argv : List[str]) -> argparse.Namespace:
     return result
 
 
-# def version_to_int(version : str) -> int:
+# def fetchone_and_tell(params : SimpleNamespace,
+#                       target : str,
+#                       query : str,
+#                       query_params : Tuple[Any, Any]) -> Tuple[Any]:
 #     """
-#     Map the usual version triplet 'major.minor.patch' (where to all three
-#     numbers are integers) an integer number
-
-#     To be used in SQLite `ORDER BY` clauses.
-
-#     OBS: Contributed by ChatGPT
+#     Query the database, fetch one row for the answer and raises exception
+#     if something was wrong
 
 #     Parameters
 #     ----------
-#     version : str
-#         A triplet 'major.minor.patch'.
+#     params : SimpleNamespace
+#         An object with program parameters.
+#     query : str
+#         The query to be applied to the database.
+#     qry_params : Tuple[Any, Any]
+#         The parameters to the query.
 
 #     Returns
 #     -------
-#     int
-#         A single integer number mapping the version triplet.
+#     Tuple[Any]
+#         The answer, as a tuple.
+
+#     Raises
+#     ------
+#     ValueError
+#         If the information sought is not found.
 
 #     """
-#     # HINT Ensure 3 parts
-#     parts = list(map(int, (version.split('.') + ['0', '0'])[:3]))
-#     return 1 + 1000 * (parts[1] + 1000 * parts[0]) + parts[2]
+#     result = params.cur.execute(query, query_params).fetchone()
+#     if result is None:
+#         msg : str = f'Query for \'{target}\' returned empty'
+#         print(f'{sys.argv[0]}: ERROR {msg}')
+
+#         # Raise exception to indicate failure
+#         raise ValueError(msg)
+
+#     # Normal function termination
+#     return result
 
 
-def adjust_datafile_range(params : SimpleNamespace) -> None:
-    """
-    Adjust given data file range of numbers to their real limits.
-    Raises exception if not possible.
+# def fetchall_and_tell(params : SimpleNamespace,
+#                       target : str,
+#                       query : str,
+#                       query_params : Tuple[Any, Any],
+#                       ordinal : int) -> List[Tuple[Any]]:
+#     """
+#     Query the database, fetch all row of the answer and raises exception
+#     if something was wrong
 
-    Parameters
-    ----------
-    params : SimpleNamespace
-        DESCRIPTION.
+#     Parameters
+#     ----------
+#     params : SimpleNamespace
+#         An object with program parameters.
+#     query : str
+#         The query to be applied to the database.
+#     query_params : Tuple[Any, Any]
+#         The parameters to the query.
+#     ordinal : int
+#         The position of the expected answer in the list
 
-    Returns
-    -------
-    None
-        DESCRIPTION.
+#     Returns
+#     -------
+#     List[Tuple[Any]]
+#         The answer, as a list of tuples.
 
-    Raises
-    ------
-    ValueError
-        If the real and the given range sets have no intersection.
+#     Raises
+#     ------
+#     ValueError
+#         If the information sought is not found.
 
-    """
-    # HINT get the real  file limits in testdata folder
-    files : List[str] = sorted(os.listdir('../testdata'))
-    datafiles : List[dir] = list(filter(lambda x : x[-4 : ] == '.csv', files))
-    data_first = int(datafiles[0].split('.')[0])
-    data_last = int(datafiles[-1].split('.')[0])
+#     """
+#     result = params.cur.execute(query, query_params).fetchall()
+#     if (result is None) or (not isinstance(result, (list, tuple))) or \
+#         (len(result) == 0):
+#         msg : str = f'Query for \'{target}\' returned {result}'
+#         print(f'{sys.argv[0]}: ERROR {msg}')
 
-    real_set : Set[int] = set(range(data_first, data_last + 1))
-    print(f'real_set {real_set}')
+#         # Raise exception to indicate failure
+#         raise ValueError(msg)
 
-    # HINT the set given in the command line
-    given_set : Set[int] = set(params.datafile_range)
-    print(f'given_set {given_set}')
+#     if len(result) < ordinal:
+#         msg : str = 'Ordinal {ordinal} is too large. Only '
+#         msg += f'{len(result)} values are available for \'{target}\''
+#         print(f'{sys.argv[0]}: ERROR {msg}')
 
-    # HINT the intersection between given and real
-    inter = real_set.intersection(given_set)
-    print(f'intersection {inter}')
+#         # Raise exception to indicate failure
+#         raise ValueError(msg)
 
-    if len(inter) == 0:
-        msg : str = 'Wrong datafile limits. The available range is '
-        msg += 'between {data_first} and {data_last}, including'
-
-        raise ValueError(msg)
-
-    inter_min = min(inter)
-    inter_max = max(inter)
-
-    if (inter_min != params.data_first) or (inter_max != params.data_last):
-        msg : str = 'The given datafile limits will be adjusted to '
-        msg += f'[{inter_min}, {inter_max}]'
-
-        print(f'{sys.argv[0]} WARNING: {msg}')
-
-    params.data_first, params.data_last = inter_min, inter_max
-    params.datafile_range = range(params.data_first, params.data_last + 1)
-
-
-def fetchone_and_tell(params : SimpleNamespace,
-                      target : str,
-                      query : str,
-                      query_params : Tuple[Any, Any]) -> Tuple[Any]:
-    """
-    Query the database, fetch one row for the answer and raises exception
-    if something was wrong
-
-    Parameters
-    ----------
-    params : SimpleNamespace
-        An object with program parameters.
-    query : str
-        The query to be applied to the database.
-    qry_params : Tuple[Any, Any]
-        The parameters to the query.
-
-    Returns
-    -------
-    Tuple[Any]
-        The answer, as a tuple.
-
-    Raises
-    ------
-    ValueError
-        If the information sought is not found.
-
-    """
-    result = params.cur.execute(query, query_params).fetchone()
-    if result is None:
-        msg : str = f'Query for \'{target}\' returned empty'
-        print(f'{sys.argv[0]}: ERROR {msg}')
-
-        # Raise exception to indicate failure
-        raise ValueError(msg)
-
-    # Normal function termination
-    return result
-
-
-def fetchall_and_tell(params : SimpleNamespace,
-                      target : str,
-                      query : str,
-                      query_params : Tuple[Any, Any],
-                      ordinal : int) -> List[Tuple[Any]]:
-    """
-    Query the database, fetch all row of the answer and raises exception
-    if something was wrong
-
-    Parameters
-    ----------
-    params : SimpleNamespace
-        An object with program parameters.
-    query : str
-        The query to be applied to the database.
-    query_params : Tuple[Any, Any]
-        The parameters to the query.
-    ordinal : int
-        The position of the expected answer in the list
-
-    Returns
-    -------
-    List[Tuple[Any]]
-        The answer, as a list of tuples.
-
-    Raises
-    ------
-    ValueError
-        If the information sought is not found.
-
-    """
-    result = params.cur.execute(query, query_params).fetchall()
-    if (result is None) or (not isinstance(result, (list, tuple))) or \
-        (len(result) == 0):
-        msg : str = f'Query for \'{target}\' returned {result}'
-        print(f'{sys.argv[0]}: ERROR {msg}')
-
-        # Raise exception to indicate failure
-        raise ValueError(msg)
-
-    if len(result) < ordinal:
-        msg : str = 'Ordinal {ordinal} is too large. Only '
-        msg += f'{len(result)} values are available for \'{target}\''
-        print(f'{sys.argv[0]}: ERROR {msg}')
-
-        # Raise exception to indicate failure
-        raise ValueError(msg)
-
-    # Normal function termination
-    return result
+#     # Normal function termination
+#     return result
 
 def insert_code_info(params : SimpleNamespace,
                      code_name : str,
@@ -542,7 +461,7 @@ def interpret_args(args : argparse.Namespace) -> SimpleNamespace:
 
         # Return to indicate failure
         return None
-    
+
     if mk_source_folder(result.library, result.library_version):
         msg : str = 'The folder ' + \
             f'{get_source_folder(result.library, result.library_version)} ' +\
