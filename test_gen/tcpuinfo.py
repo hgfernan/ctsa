@@ -3,12 +3,12 @@ import json
 
 from typing import Dict
 
-from cpuinfo import get_cpu_info 
+from cpuinfo import get_cpu_info
 
 if len(sys.argv) < 2:
-    info = get_cpu_info() 
-    
-else: 
+    info = get_cpu_info()
+
+else:
     info = json.load(open(sys.argv[1]))
 
 print(json.dumps(info, indent=4, sort_keys=True))
